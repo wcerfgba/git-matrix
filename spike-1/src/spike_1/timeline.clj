@@ -1,17 +1,18 @@
 (ns spike-1.timeline
-  (:require [spike-1.heatmap]))
+  (:use [spike-1.heatmap]
+        [spike-1.utils]))
 
 (defprotocol ITimeline
   (effects [timeline] ""))
 
 (defrecord Timeline
-  [effects]
+  [_effects]
   ITimeline
-    (effects [timeline] (:effects timeline)))
+    (effects [timeline] (:_effects timeline))
   Heatmappable
     (heatmap [timeline]
-             (let [effects (map heatmap (effects timeline))]
-                  (reduce + effects))))
+             (let [effect-heatmaps (map heatmap (effects timeline))]
+                  (apply + effect-heatmaps))))
 (defn timeline
   ""
   [effects]

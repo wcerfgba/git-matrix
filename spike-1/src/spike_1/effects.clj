@@ -2,7 +2,8 @@
   (:use [spike-1.file-line]
         [spike-1.effect]
         [spike-1.heatmap]
-        [spike-1.util]))
+        [spike-1.arithmetic-map]
+        [spike-1.utils]))
   
 ; (extend-protocol Heatmappable
 ;   Effect
@@ -24,19 +25,19 @@
     (file-lines [effect]
       (map #(file-line (merge effect {:line-number %}))
           (range viewport-top-line
-                  (+ 1 viewport-bottom-line)))))
+                  (+ 1 viewport-bottom-line))))
+  Heatmappable
+    (heatmap [effect]
+        (integrate-time effect (fn []
+          (let [reducer
+                  (fn [heatmap file-line]
+                      (assoc heatmap file-line 0.1))]
+            (reduce reducer (arithmetic-map) (file-lines effect)))))))
 (defn visible-file-effect
   ""
   [& attrs]
   (map->VisibleFileEffect attrs))
-(extend VisibleFileEffect
-  Heatmappable
-    {:heatmap (fn [effect]
-        (integrate-time effect (fn []
-          (let [reducer
-                (fn [heatmap file-line]
-                    (assoc heatmap file-line 0.1))]
-            (reduce reducer {} (debug (file-lines effect)))))))})
+
 
 
 
@@ -50,16 +51,15 @@
    cursor-column]
   Effect
     (file-lines [effect]
-      [(file-line (merge effect {:line-number (:cursor-line effect)}))]))
+      [(file-line (merge effect {:line-number (:cursor-line effect)}))])
+  Heatmappable
+    (heatmap [effect]
+      (integrate-time effect (fn []
+        (arithmetic-map {(file-line effect) 1.0})))))
 (defn cursor-position-effect
   ""
   [& attrs]
   (map->CursorPositionEffect attrs))
-(extend CursorPositionEffect
-  Heatmappable
-    {:heatmap (fn [effect]
-      (integrate-time effect (fn []
-        {(file-line effect) 1.0})))})
 
 
 

@@ -1,21 +1,22 @@
 (ns spike-1.core
-  (:use [spike-1.effects]
+  (:use [spike-1.timeline]
+        [spike-1.effects]
         [spike-1.heatmap]
-        [spike-1.util]))
+        [spike-1.utils]))
 
-(defn timeline []
+(defn get-timeline []
   (timeline
     [(visible-file-effect
-      {:from-time (ts 10240000)
-       :to-time (ts 10240300)
+      {:from-time 10240000
+       :to-time 10240300
        :project-name "eyeson"
        :vcs-reference "<hash>"
        :file-path "scratch-1/src/core.clj"
        :viewport-top-line 1
        :viewport-bottom-line 36})
     (cursor-position-effect
-      {:from-time (ts 10240230)
-       :to-time (ts 10240300)
+      {:from-time 10240230
+       :to-time 10240300
        :project-name "eyeson"
        :vcs-reference "<hash>"
        :file-path "scratch-1/src/core.clj"
@@ -25,4 +26,4 @@
 (defn -main
   [& args]
   (do
-    (println (heatmap (timeline)))))
+    (println (heatmap (debug (get-timeline))))))
