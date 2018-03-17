@@ -22,7 +22,7 @@ export class VisibleFileEffect {
       range(this.viewportTopLine, this.viewportBottomLine)
         .map(lineNumber => [
           new FileLine({ ...this, lineNumber }),
-          0.1
+          0.1 * (this.toTime - this.fromTime)
         ])
     )
   }
@@ -46,7 +46,7 @@ export class CursorPositionEffect {
   heatmap() {
     return new Heatmap([
       [ new FileLine({ ...this, lineNumber: this.cursorLine }),
-        1.0 ]
+        1.0 * (this.toTime - this.fromTime) ]
     ])
   }
 }

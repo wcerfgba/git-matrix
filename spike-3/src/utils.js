@@ -34,3 +34,10 @@ export const range = (from, to, incr = 1, incrFun = x => x + incr) => {
   }
   return range
 }
+
+export const integrate = (f, tStart, tEnd, { decay = 1.0, timestep = 0.001 }) =>
+  range(tStart, tEnd, timestep)
+    .reduce(
+      (sum, tNext) => (decay * sum) + (timestep * f(tNext)),
+      0.0
+    )
