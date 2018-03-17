@@ -1,8 +1,7 @@
 import { Map, Set } from 'immutable'
 
-/* A Heatmap is a map from FileLines to Numbers, representing how 'hot' a line 
- * is.
- */
+// A Heatmap is a map from FileLines to Numbers, representing how 'hot' a line 
+// is.
 export class Heatmap {
   constructor(entries) {
     this.heatmap = Map(entries)

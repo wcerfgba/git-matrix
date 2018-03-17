@@ -1,19 +1,21 @@
 import { Map, is } from 'immutable'
 import { assertKeys } from './utils'
 
-/* A FileLine provides all the information necessary to target a particular 
- * line of a file. 
- */
+// A FileLine provides all the information necessary to target a particular 
+// line of a file. 
 export class FileLine {
   static keys = [
-    'projectName',
     // Arbitrary reference at each end (repo name)
-    'vcsReference',
+    'projectName',
+
     // Something usable by the project's configured VCS to determine a set of 
     // files. We may want to look at the diff with the next revision after 
     // this one when determining which lines have received effects.
-    'filePath',
+    'vcsReference',
+    
     // Relative to project root.
+    'filePath',
+    
     'lineNumber'
   ]
 
