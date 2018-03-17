@@ -1,6 +1,6 @@
 import { Heatmap } from './heatmap'
 import { FileLine } from './file_line'
-import { assertKeys } from './utils'
+import { assignKeys, range } from './utils'
 
 export class VisibleFileEffect {
   static keys = [
@@ -14,19 +14,17 @@ export class VisibleFileEffect {
   ]
 
   constructor(o) {
-    assertKeys(VisibleFileEffect.keys, o)
-    Object.assign(this, o)
+    assignKeys(VisibleFileEffect.keys, o, this)
   }
 
   heatmap() {
-    return new Heatmap([
-      [ new FileLine({
-          projectName: 'string',
-          vcsReference: 'string',
-          filePath: 'string',
-          lineNumber: 123 }),
-        123.3 ]
-    ])
+    return new Heatmap(
+      range(this.viewportTopLine, this.viewportBottomLine)
+        .map(lineNumber => [
+          new FileLine({ ...this, lineNumber }),
+          0.1
+        ])
+    )
   }
 }
 
@@ -42,18 +40,13 @@ export class CursorPositionEffect {
   ]
 
   constructor(o) {
-    assertKeys(CursorPositionEffect.keys, o)
-    Object.assign(this, o)
+    assignKeys(CursorPositionEffect.keys, o, this)
   }
 
   heatmap() {
     return new Heatmap([
-      [ new FileLine({
-          projectName: 'string',
-          vcsReference: 'string',
-          filePath: 'string',
-          lineNumber: 123 }),
-        123.3 ]
+      [ new FileLine({ ...this, lineNumber: this.cursorLine }),
+        1.0 ]
     ])
   }
 }

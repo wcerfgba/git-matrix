@@ -10,11 +10,27 @@ export const assertKeys = (ks, o) => {
   ks = List(ks)
   o = Map(o)
   assert(
-    o.keySeq().isSubset(ks) && ks.isSubset(o.keySeq())
+    ks.isSubset(o.keySeq()),
+    "Object "
   )
+}
+
+export const getMany = (ks, o) => Map(ks.map(k => [k, o[k]])).toObject()
+
+export const assignKeys = (ks, o, target) => {
+  assertKeys(ks, o)
+  Object.assign(target, getMany(ks, o))
 }
 
 export const assert = (p, m) => {
   if (p) { return p }
   throw new Error(m)
+}
+
+export const range = (from, to, incr = 1, incrFun = x => x + incr) => {
+  const range = []
+  for (let next = from; next < to; next = incrFun(next)) {
+    range.push(next)
+  }
+  return range
 }

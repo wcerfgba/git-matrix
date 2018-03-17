@@ -1,5 +1,5 @@
 import { Map, is } from 'immutable'
-import { assertKeys } from './utils'
+import { assignKeys } from './utils'
 
 // A FileLine provides all the information necessary to target a particular 
 // line of a file. 
@@ -20,8 +20,7 @@ export class FileLine {
   ]
 
   constructor(o) {
-    assertKeys(FileLine.keys, o)
-    Object.assign(this, o)
+    assignKeys(FileLine.keys, o, this)
   }
 
   toObject() { return this }
