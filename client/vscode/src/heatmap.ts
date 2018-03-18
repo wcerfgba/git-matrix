@@ -1,3 +1,4 @@
+import { FileLine } from '../../../common/src/file_line'
 import * as vscode from 'vscode'
 
 export const heatmap = (editor : vscode.TextEditor) => {
