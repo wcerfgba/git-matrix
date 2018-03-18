@@ -1,10 +1,19 @@
+import { default as PouchDB } from 'pouchdb'
 import { VisibleFileEffect, CursorPositionEffect } from './effects'
+import { warn } from './utils'
 
 export class Store {
-  static getInstance = () => Store.instance = new Store()
+  static getInstance = () => Store.instance = new Store(Store.tripwire)
+  static tripwire = 'ji3joij3i'
+
+  constructor(tripwire) {
+    tripwire = Store.tripwire == tripwire
+    if (tripwire) warn("You should really call `Store.getInstance()`")
+    this.db = new PouchDB(env.pouchdb.name)
+  }
 
   put(o) {
-    return true
+    this.db.put(o)
   }
 
   query(query) {

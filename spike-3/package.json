@@ -2,7 +2,8 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
-    "immutable": "^4.0.0-rc.9"
+    "immutable": "^4.0.0-rc.9",
+    "pouchdb": "^6.4.3"
   },
   "devDependencies": {
     "babel-plugin-transform-class-properties": "^6.24.1",
