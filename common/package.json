@@ -1,5 +1,23 @@
 {
+  "name": "eyeson-common",
+  "version": "0.0.0",
   "dependencies": {
-    "immutable": "^3.8.2"
+    "immutable": "^3.8.2",
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.32",
+    "@babel/core": "^7.0.0-beta.32",
+    "@babel/node": "^7.0.0-beta.42",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.32",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.32",
+    "@babel/preset-env": "^7.0.0-beta.32",
+    "@babel/preset-typescript": "^7.0.0-beta.32",
+    "typescript": "^2.6.2",
+    "@types/isomorphic-fetch": "^0.0.34"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib --extensions \".ts,.tsx,.js\"",
+    "type-check": "tsc"
   }
 }

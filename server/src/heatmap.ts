@@ -1,5 +1,9 @@
-import { HeatmapT, Heatmap, keys } from '../../common/src/heatmap'
-import { FileLine } from '../../common/src/file_line' 
+import * as qwe from 'eyeson-common'
+console.log(qwe)
+
+
+import { HeatmapT, Heatmap, keys } from 'eyeson-common/heatmap'
+import { FileLine } from 'eyeson-common/file_line' 
 import { Map, Set } from 'immutable'
 
 export const add =

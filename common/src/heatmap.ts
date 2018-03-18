@@ -8,4 +8,5 @@ export type HeatmapEntryT = [FileLine, number]
 export const Heatmap =
   (entries : Array<HeatmapEntryT> = []) => Map<FileLine, number>(entries)
 
-export const keys = (heatmap : HeatmapT) => heatmap.keySeq().toArray()
+export const keys = (heatmap : HeatmapT) => <FileLine[]>heatmap.keySeq().toArray()
+export const entries = (heatmap : HeatmapT) => <HeatmapEntryT[]>heatmap.entrySeq().toArray()

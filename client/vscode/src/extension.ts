@@ -1,38 +1,40 @@
 import * as vscode from 'vscode'
-import { heatmap } from './heatmap'
+import * as heatmap from './heatmap'
 
-export function activate(context: vscode.ExtensionContext) {
-	let activeEditor = vscode.window.activeTextEditor
-	if (activeEditor) {
-		triggerUpdateDecorations()
+export class EditorHandler {
+	editor : vscode.TextEditor
+
+	init = (context : vscode.ExtensionContext) => {
+		vscode.window.onDidChangeActiveTextEditor(
+			this.setEditor,
+			null,
+			context.subscriptions
+		)
+		this.setEditor()
 	}
 
-	vscode.window.onDidChangeActiveTextEditor(editor => {
-		activeEditor = editor
-		if (editor) {
-			triggerUpdateDecorations()
-		}
-	}, null, context.subscriptions)
-
-	vscode.workspace.onDidChangeTextDocument(event => {
-		if (activeEditor && event.document === activeEditor.document) {
-			triggerUpdateDecorations()
-		}
-	}, null, context.subscriptions)
-
-	let timeout = null
-	function triggerUpdateDecorations() {
-		if (timeout) {
-			clearTimeout(timeout)
-		}
-		timeout = setTimeout(updateDecorations, 1000)
-	}
-
-	function updateDecorations() {
-		if (!activeEditor) {
-			return
-		}
-		heatmap(activeEditor)
+	setEditor = () => {
+		this.editor = vscode.window.activeTextEditor
 	}
 }
 
+const config = {
+	server: 'localhost:3000'
+}
+
+const editorHandler = new EditorHandler()
+
+export const activate = (context : vscode.ExtensionContext) => {
+	editorHandler.init(context)
+	vscode.workspace.onDidChangeTextDocument(event => {
+		const editor = editorHandler.editor
+		if (editor && event.document === editor.document) {
+			getAndDrawHeatmap(editor)
+		}
+	}, null, context.subscriptions)
+}
+
+export async function getAndDrawHeatmap(editor : vscode.TextEditor) {
+	const hm = await heatmap.get(config)
+	heatmap.draw(hm, editor)
+}
