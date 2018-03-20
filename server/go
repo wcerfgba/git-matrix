@@ -1,0 +1,14 @@
+#!/bin/sh
+
+ROOT=$(dirname $(realpath -s $0))
+
+(
+  cd $ROOT/../common
+  yarn build
+)
+
+(
+  cd $ROOT/../server
+  yarn build
+  yarn start
+)

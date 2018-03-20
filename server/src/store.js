@@ -1,24 +1,12 @@
-import { default as PouchDB } from 'pouchdb'
-import { VisibleFileEffect, CursorPositionEffect } from './effects'
-import { warn } from './utils'
+// TODO: dynamodb
+import { Timeline } from '../vendor/eyeson-common/lib/timeline'
+import { VisibleFileEffect, CursorPositionEffect } from '../vendor/eyeson-common/lib/effects'
 
-export class Store {
-  static getInstance = () => Store.instance = new Store(Store.tripwire)
-  static tripwire = 'ji3joij3i'
-
-  constructor(tripwire) {
-    tripwire = Store.tripwire == tripwire
-    if (tripwire) warn("You should really call `Store.getInstance()`")
-    this.db = new PouchDB(env.pouchdb.name)
-  }
-
-  put(o) {
-    this.db.put(o)
-  }
-
-  query(query) {
-    return [
-      new VisibleFileEffect({
+export const Store = {
+  new: () => { /* todo */ },
+  query: (store, query) => {
+    return Timeline.new([
+      VisibleFileEffect.new({
         fromTime: 10240000,
         toTime: 10240300,
         projectName: "eyeson",
@@ -27,7 +15,7 @@ export class Store {
         viewportTopLine: 1,
         viewportBottomLine: 36
       }),
-      new CursorPositionEffect({
+      CursorPositionEffect.new({
         fromTime: 10240230,
         toTime: 10240300,
         projectName: "eyeson",
@@ -36,6 +24,6 @@ export class Store {
         cursorLine: 28,
         cursorColumn: 20
       }),
-    ]
+    ])
   }
 }

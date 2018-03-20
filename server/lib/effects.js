@@ -3,82 +3,53 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CursorPositionEffect = exports.VisibleFileEffect = void 0;
+exports.CursorPositionEffect = exports.VisibleFileEffect = exports.Effect = void 0;
 
-var _heatmap = require("./heatmap");
+var effects = _interopRequireWildcard(require("../vendor/eyeson-common/lib/effects"));
 
-var _file_line = require("./file_line");
+var _heatmap = require("../vendor/eyeson-common/lib/heatmap");
+
+var _file_line = require("../vendor/eyeson-common/lib/file_line");
 
 var _utils = require("./utils");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var Effect = {
+  heatmap: function heatmap(effect) {
+    switch (effect.effectType) {
+      case 'VisibleFileEffect':
+        return VisibleFileEffect.heatmap(effect);
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+      case 'CursorPositionEffect':
+        return CursorPositionEffect.heatmap(effect);
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var VisibleFileEffect =
-/*#__PURE__*/
-function () {
-  function VisibleFileEffect(o) {
-    _classCallCheck(this, VisibleFileEffect);
-
-    (0, _utils.assignKeys)(VisibleFileEffect.keys, o, this);
-  }
-
-  _createClass(VisibleFileEffect, [{
-    key: "heatmap",
-    value: function heatmap() {
-      var _this = this;
-
-      return new _heatmap.Heatmap((0, _utils.range)(this.viewportTopLine, this.viewportBottomLine).map(function (lineNumber) {
-        return [new _file_line.FileLine(_objectSpread({}, _this, {
-          lineNumber: lineNumber
-        })), 0.1 * (_this.toTime - _this.fromTime)];
-      }));
+      default:
+        return null;
+      // TODO: error handling!!!!!
     }
-  }]);
-
-  return VisibleFileEffect;
-}();
-
+  }
+};
+exports.Effect = Effect;
+var VisibleFileEffect = {
+  heatmap: function heatmap(effect) {
+    return _heatmap.Heatmap.new((0, _utils.range)(effect.viewportTopLine, effect.viewportBottomLine).map(function (lineNumber) {
+      return [_file_line.FileLine.new(_objectSpread({}, effect, {
+        lineNumber: lineNumber
+      })), 0.1 * (effect.toTime - effect.fromTime)];
+    }));
+  }
+};
 exports.VisibleFileEffect = VisibleFileEffect;
-Object.defineProperty(VisibleFileEffect, "keys", {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  value: ['fromTime', 'toTime', 'projectName', 'vcsReference', 'filePath', 'viewportTopLine', 'viewportBottomLine']
-});
-
-var CursorPositionEffect =
-/*#__PURE__*/
-function () {
-  function CursorPositionEffect(o) {
-    _classCallCheck(this, CursorPositionEffect);
-
-    (0, _utils.assignKeys)(CursorPositionEffect.keys, o, this);
+var CursorPositionEffect = {
+  heatmap: function heatmap(effect) {
+    return _heatmap.Heatmap.new([[_file_line.FileLine.new(_objectSpread({}, effect, {
+      lineNumber: effect.cursorLine
+    })), 1.0 * (effect.toTime - effect.fromTime)]]);
   }
-
-  _createClass(CursorPositionEffect, [{
-    key: "heatmap",
-    value: function heatmap() {
-      return new _heatmap.Heatmap([[new _file_line.FileLine(_objectSpread({}, this, {
-        lineNumber: this.cursorLine
-      })), 1.0 * (this.toTime - this.fromTime)]]);
-    }
-  }]);
-
-  return CursorPositionEffect;
-}();
-
+};
 exports.CursorPositionEffect = CursorPositionEffect;
-Object.defineProperty(CursorPositionEffect, "keys", {
-  configurable: true,
-  enumerable: true,
-  writable: true,
-  value: ['fromTime', 'toTime', 'projectName', 'vcsReference', 'filePath', 'cursorLine', 'cursorColumn']
-});

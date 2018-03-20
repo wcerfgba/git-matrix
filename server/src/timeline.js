@@ -1,16 +1,11 @@
 import { List } from 'immutable'
-import { Heatmap, heatmap } from './heatmap'
-import { add } from './add'
+import { Heatmap as _Heatmap } from '../vendor/eyeson-common/lib/heatmap'
+import { Heatmap } from './heatmap'
+import { Effect } from './effects'
 
-export class Timeline {
-  constructor(entries) {
-    this.effects = List(entries)
-  }
-
-  heatmap() {
-    return new Heatmap(
-      this.effects.map(heatmap)
-                  .reduce(add)
-    );
-  }
+export const Timeline = {
+  heatmap: (timeline) => _Heatmap.new(
+    timeline.map(Effect.heatmap)
+            .reduce(Heatmap.add)
+  )
 }

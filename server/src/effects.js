@@ -1,52 +1,30 @@
-import { Heatmap } from './heatmap'
-import { FileLine } from './file_line'
-import { assignKeys, range } from './utils'
+import * as effects from '../vendor/eyeson-common/lib/effects'
+import { Heatmap } from '../vendor/eyeson-common/lib/heatmap'
+import { FileLine } from '../vendor/eyeson-common/lib/file_line'
+import { range } from './utils'
 
-export class VisibleFileEffect {
-  static keys = [
-    'fromTime',
-    'toTime',
-    'projectName',
-    'vcsReference',
-    'filePath',
-    'viewportTopLine',
-    'viewportBottomLine'
-  ]
-
-  constructor(o) {
-    assignKeys(VisibleFileEffect.keys, o, this)
-  }
-
-  heatmap() {
-    return new Heatmap(
-      range(this.viewportTopLine, this.viewportBottomLine)
-        .map(lineNumber => [
-          new FileLine({ ...this, lineNumber }),
-          0.1 * (this.toTime - this.fromTime)
-        ])
-    )
+export const Effect = {
+  heatmap: (effect) => {
+    switch (effect.effectType) {
+      case 'VisibleFileEffect': return VisibleFileEffect.heatmap(effect)
+      case 'CursorPositionEffect': return CursorPositionEffect.heatmap(effect)
+      default: return null; // TODO: error handling!!!!!
+    }
   }
 }
 
-export class CursorPositionEffect {
-  static keys = [
-    'fromTime',
-    'toTime',
-    'projectName',
-    'vcsReference',
-    'filePath',
-    'cursorLine',
-    'cursorColumn'
-  ]
+export const VisibleFileEffect = {
+  heatmap: (effect) => Heatmap.new(
+    range(effect.viewportTopLine,
+          effect.viewportBottomLine)
+      .map(lineNumber => [ FileLine.new({ ...effect, lineNumber }),
+                           0.1 * (effect.toTime - effect.fromTime) ])
+  )
+}
 
-  constructor(o) {
-    assignKeys(CursorPositionEffect.keys, o, this)
-  }
-
-  heatmap() {
-    return new Heatmap([
-      [ new FileLine({ ...this, lineNumber: this.cursorLine }),
-        1.0 * (this.toTime - this.fromTime) ]
-    ])
-  }
+export const CursorPositionEffect = {
+  heatmap: (effect) => Heatmap.new([[
+    FileLine.new({ ...effect, lineNumber: effect.cursorLine }),
+    1.0 * (effect.toTime - effect.fromTime)
+  ]])
 }

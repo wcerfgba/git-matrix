@@ -6,23 +6,23 @@ var _bodyParser = _interopRequireDefault(require("body-parser"));
 
 var _store = require("./store");
 
-var _effect = require("./effect");
+var _timeline = require("../vendor/eyeson-common/lib/timeline");
 
-var _timeline = require("./timeline");
+var _timeline2 = require("./timeline");
+
+var _utils = require("./utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = _store.Store.getInstance();
+//import { Effect } from '../vendor/eyeson-common/lib/effects'
+var store = _store.Store.new();
 
 var app = (0, _express.default)();
 app.use(_bodyParser.default.json());
 app.post('/effects', function (req, res) {
   try {
-    var effects = JSON.parse(req.body);
-    assert(typeof effects === 'array', "Expected array of effect objects");
-    effects.map(_effect.Effect.new).forEach(function (effect) {
-      return store.put(effect);
-    });
+    var effects = JSON.parse(req.body); // ....
+
     res.status(200);
   } catch (e) {
     res.status(400).json({
@@ -31,9 +31,11 @@ app.post('/effects', function (req, res) {
   }
 });
 app.get('/heatmap', function (req, res) {
-  var timeline = new _timeline.Timeline(store.query({
+  // TODO: lele how do i async
+  var timeline = _timeline.Timeline.new(_store.Store.query(store, {
     and: req.params
   }));
-  res.status(200).send(timeline.heatmap().toJSON());
+
+  res.status(200).send(JSON.stringify(_timeline2.Timeline.heatmap(timeline)));
 });
 app.listen(3000);
