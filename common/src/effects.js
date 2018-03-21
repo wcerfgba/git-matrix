@@ -9,7 +9,7 @@ export const Effect = {
     (o.effectType === 'VisibleFileEffect' ||
      o.effectType === 'CursorPositionEffect')
   ),
-  new: (o) => ({
+  create: (o) => ({
     effectType: o.effectType,
     fromTime: o.fromTime,
     toTime: o.toTime,
@@ -26,8 +26,8 @@ export const VisibleFileEffect = {
     typeof o.viewportTopLine === 'number' &&
     typeof o.viewportBottomLine === 'number'
   ),
-  new: (o) => ({
-    ...Effect.new(o),
+  create: (o) => ({
+    ...Effect.create(o),
     effectType: 'VisibleFileEffect',
     filePath: o.filePath,
     viewportTopLine: o.viewportTopLine,
@@ -43,8 +43,8 @@ export const CursorPositionEffect = {
     typeof o.cursorLine === 'number' &&
     typeof o.cursorColumn === 'number'
   ),
-  new: (o) => ({
-    ...Effect.new(o),
+  create: (o) => ({
+    ...Effect.create(o),
     effectType: 'CursorPositionEffect',
     filePath: o.filePath,
     cursorLine: o.cursorLine,

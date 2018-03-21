@@ -1,40 +1,51 @@
 import * as vscode from 'vscode'
 import * as heatmap from './heatmap'
+import { log } from './utils'
+
+const config = {
+	server: 'http://localhost:3000'
+}
 
 export class EditorHandler {
-	editor : vscode.TextEditor
+	editor
+	heatmap
 
-	init = (context : vscode.ExtensionContext) => {
+	init = (context) => {
 		vscode.window.onDidChangeActiveTextEditor(
-			this.setEditor,
+			this.onDidChangeActiveTextEditor,
 			null,
 			context.subscriptions
 		)
 		this.setEditor()
+		this.getHeatmap()
+	}
+
+	onDidChangeActiveTextEditor = () => {
+		this.setEditor()
+		this.getHeatmap()
 	}
 
 	setEditor = () => {
 		this.editor = vscode.window.activeTextEditor
 	}
-}
 
-const config = {
-	server: 'localhost:3000'
+	getHeatmap = () => {
+		heatmap.get(config)
+			.then(heatmap => this.heatmap = heatmap)
+			.then(() => log(this.heatmap))
+			.then(() =>	heatmap.draw(this.heatmap, this.editor))
+			.catch(log)
+	}
 }
 
 const editorHandler = new EditorHandler()
 
-export const activate = (context : vscode.ExtensionContext) => {
+export const activate = (context) => {
 	editorHandler.init(context)
 	vscode.workspace.onDidChangeTextDocument(event => {
 		const editor = editorHandler.editor
 		if (editor && event.document === editor.document) {
-			getAndDrawHeatmap(editor)
+			editorHandler.getHeatmap()
 		}
 	}, null, context.subscriptions)
-}
-
-export async function getAndDrawHeatmap(editor : vscode.TextEditor) {
-	const hm = await heatmap.get(config)
-	heatmap.draw(hm, editor)
 }

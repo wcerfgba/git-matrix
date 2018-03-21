@@ -1,6 +1,6 @@
 import * as effects from '../vendor/eyeson-common/lib/effects'
-import { Heatmap } from '../vendor/eyeson-common/lib/heatmap'
-import { FileLine } from '../vendor/eyeson-common/lib/file_line'
+import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
+import * as FileLine from '../vendor/eyeson-common/lib/file_line'
 import { range } from './utils'
 
 export const Effect = {
@@ -14,17 +14,17 @@ export const Effect = {
 }
 
 export const VisibleFileEffect = {
-  heatmap: (effect) => Heatmap.new(
+  heatmap: (effect) => Heatmap.create(
     range(effect.viewportTopLine,
-          effect.viewportBottomLine)
-      .map(lineNumber => [ FileLine.new({ ...effect, lineNumber }),
+          effect.viewportBottomLine + 1)
+      .map(lineNumber => [ FileLine.create({ ...effect, lineNumber }),
                            0.1 * (effect.toTime - effect.fromTime) ])
   )
 }
 
 export const CursorPositionEffect = {
-  heatmap: (effect) => Heatmap.new([[
-    FileLine.new({ ...effect, lineNumber: effect.cursorLine }),
+  heatmap: (effect) => Heatmap.create([[
+    FileLine.create({ ...effect, lineNumber: effect.cursorLine }),
     1.0 * (effect.toTime - effect.fromTime)
   ]])
 }

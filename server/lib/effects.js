@@ -7,9 +7,9 @@ exports.CursorPositionEffect = exports.VisibleFileEffect = exports.Effect = void
 
 var effects = _interopRequireWildcard(require("../vendor/eyeson-common/lib/effects"));
 
-var _heatmap = require("../vendor/eyeson-common/lib/heatmap");
+var Heatmap = _interopRequireWildcard(require("../vendor/eyeson-common/lib/heatmap"));
 
-var _file_line = require("../vendor/eyeson-common/lib/file_line");
+var FileLine = _interopRequireWildcard(require("../vendor/eyeson-common/lib/file_line"));
 
 var _utils = require("./utils");
 
@@ -37,8 +37,8 @@ var Effect = {
 exports.Effect = Effect;
 var VisibleFileEffect = {
   heatmap: function heatmap(effect) {
-    return _heatmap.Heatmap.new((0, _utils.range)(effect.viewportTopLine, effect.viewportBottomLine).map(function (lineNumber) {
-      return [_file_line.FileLine.new(_objectSpread({}, effect, {
+    return Heatmap.create((0, _utils.range)(effect.viewportTopLine, effect.viewportBottomLine + 1).map(function (lineNumber) {
+      return [FileLine.create(_objectSpread({}, effect, {
         lineNumber: lineNumber
       })), 0.1 * (effect.toTime - effect.fromTime)];
     }));
@@ -47,7 +47,7 @@ var VisibleFileEffect = {
 exports.VisibleFileEffect = VisibleFileEffect;
 var CursorPositionEffect = {
   heatmap: function heatmap(effect) {
-    return _heatmap.Heatmap.new([[_file_line.FileLine.new(_objectSpread({}, effect, {
+    return Heatmap.create([[FileLine.create(_objectSpread({}, effect, {
       lineNumber: effect.cursorLine
     })), 1.0 * (effect.toTime - effect.fromTime)]]);
   }

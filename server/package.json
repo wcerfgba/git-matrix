@@ -21,7 +21,8 @@
   "scripts": {
     "link": "(mkdir node_modules || true) && ln -nsf ../../common node_modules/eyeson-common",
     "build": "babel src --out-dir lib",
-    "test": "jest",
-    "start": "node lib/server.js"
-  }
+    "start": "node lib/index.js",
+    "test": "jest"
+  },
+  "main": "lib/index.js"
 }

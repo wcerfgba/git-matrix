@@ -3,7 +3,7 @@ import { default as fetch } from 'isomorphic-fetch'
 import { log } from '../src/utils'
 
 describe('GET /heatmap', () => {
-  let server = Server.new({
+  let server = Server.create({
     port: 3000
   })
 

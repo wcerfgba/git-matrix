@@ -1,7 +1,3 @@
-Get server to calculate shit correctly (again)
-  
-  Add `trace` throughout
-  
-  Fix shit (probs to do with `add` and stuff?)
+Add tracing
 
-  Write tests
+Wrap Map for Heatmap and define FileLine.equals(a, b)
