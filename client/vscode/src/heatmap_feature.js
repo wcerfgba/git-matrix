@@ -1,8 +1,8 @@
-import * as Heatmap from '../../../common/lib/heatmap'
+import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import * as EffectsHandler from './effects_handler'
 import * as vscode from 'vscode'
 import 'isomorphic-fetch'
-import { assert } from './utils'
+import { assert } from '../vendor/eyeson-common/lib/utils'
 
 export const create = (o) => {
 	return {

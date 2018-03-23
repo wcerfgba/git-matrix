@@ -1,6 +1,5 @@
 import { Server } from '../src/server'
 import { default as fetch } from 'isomorphic-fetch'
-import { log } from '../src/utils'
 
 describe('GET /heatmap', () => {
   let server = Server.create({
@@ -21,7 +20,7 @@ describe('GET /heatmap', () => {
         res
           .text()
           .then((body) => {
-            log(body)
+            console.log(body)
             expect(res.status).toEqual(200)
             done()
           })

@@ -4,7 +4,6 @@ import * as Store from './store'
 //import { Effect } from '../vendor/eyeson-common/lib/effects'
 import * as _Timeline from '../vendor/eyeson-common/lib/timeline'
 import * as Timeline from './timeline'
-import { log } from './utils'
 
 export const create = ({ logger = (...args) => {},
                          port }) => {
