@@ -25,7 +25,8 @@ export const create = ({ logger = (...args) => {},
 
   app.get('/heatmap', (req, res) => {
     logger(req)
-    // TODO: lele how do i async
+    // TODO: async Store request
+    // TODO: bin Timeline (it's just a set of effects bro)
     const timeline = _Timeline.create(
       Store.query(store, {
         and: req.params

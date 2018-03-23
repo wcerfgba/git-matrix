@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { Map, Set } from 'immutable'
 import * as FileLine from './file_line'
 
 export const create = (entries = []) => Map(entries)
@@ -21,3 +21,19 @@ export const get = (heatmap, k) => {
 export const set = (heatmap, k, v) => {
   return heatmap.set(k, v)
 }
+
+export const add = (a, b) => {
+  return Set([
+    ...fileLines(a),
+    ...fileLines(b)
+  ]).reduce(
+    (sum, fileLine) => set(sum, fileLine, (
+      get(sum, fileLine) +
+      get(a, fileLine) +
+      get(b, fileLine)
+    )),
+    create()
+  )
+}
+
+// TODO! : map

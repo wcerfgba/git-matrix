@@ -41,7 +41,8 @@ var create = function create(_ref) {
     }
   });
   app.get('/heatmap', function (req, res) {
-    logger(req); // TODO: lele how do i async
+    logger(req); // TODO: async Store request
+    // TODO: bin Timeline (it's just a set of effects bro)
 
     var timeline = _Timeline.create(Store.query(store, {
       and: req.params
