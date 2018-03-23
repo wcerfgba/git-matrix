@@ -1,6 +1,6 @@
 import * as Heatmap from './heatmap'
 import * as FileLine from './file_line'
-import { range } from '../vendor/eyeson-common/lib/utils'
+import { range } from './utils'
 
 export const Effect = {
   is: (o) => (
