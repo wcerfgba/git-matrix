@@ -21,8 +21,6 @@ export const create = (o) => {
 
 const draw = (heatmapUIHandler) => {
   // TODO: better handling of transience
-  console.log(heatmapUIHandler.heatmapHandler.heatmap)
-  console.log(heatmapUIHandler.editorHandler)
   if (!heatmapUIHandler.editorHandler.activeEditor) { return; }
   Heatmap.map(
     heatmapUIHandler.heatmapHandler.heatmap,
@@ -31,6 +29,8 @@ const draw = (heatmapUIHandler) => {
       entry
     )
   )
+  // TODO: this is hw we get the lines boiiiii
+  console.log(heatmapUIHandler.editorHandler.activeEditor._visibleRanges)
 }
 
 const setHeatmapEntryDecoration = (
