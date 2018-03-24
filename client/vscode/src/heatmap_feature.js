@@ -1,5 +1,8 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
+import * as EditorHandler from './editor_handler'
 import * as EffectsHandler from './effects_handler'
+import * as HeatmapHandler from './heatmap_handler'
+import * as HeatmapUIHandler from './heatmap_ui_handler'
 import * as vscode from 'vscode'
 import 'isomorphic-fetch'
 import { assert } from '../vendor/eyeson-common/lib/utils'
@@ -7,6 +10,7 @@ import { assert } from '../vendor/eyeson-common/lib/utils'
 export const create = (o) => {
 	return {
 		active: false,
+		extensionContext: o.extensionContext,
 		editorHandler: null,
 		effectsHandler: null,
 		heatmapHandler: null,
@@ -17,7 +21,9 @@ export const create = (o) => {
 export const activate = (heatmapFeature) => {
 	assert(heatmapFeature.active === false, "Cannot activate already-active heatmap feature.")
 	heatmapFeature.active = true
-	heatmapFeature.editorHandler = EditorHandler.create()
+	heatmapFeature.editorHandler = EditorHandler.create({
+		extensionContext: heatmapFeature.extensionContext
+	})
 	heatmapFeature.effectsHandler = EffectsHandler.create()
 	heatmapFeature.heatmapHandler = HeatmapHandler.create({
 		effectsHandler: heatmapFeature.effectsHandler

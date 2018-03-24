@@ -1,9 +1,10 @@
+import { Effect } from '../vendor/eyeson-common/lib/effects'
 import { on, fire } from '../vendor/eyeson-common/lib/event_listener'
 
 export const create = () => {
   const effectsHandler = {
     history: fakeData(), // [],
-    active: [],
+    active: fakeData(), // [],
     iterateInterval: 1000,
     iterateIntervalID: null,
     eventListeners: []

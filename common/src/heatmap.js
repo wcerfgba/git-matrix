@@ -36,4 +36,8 @@ export const add = (a, b) => {
   )
 }
 
-// TODO! : map
+export const map = (heatmap, f) => {
+  return create(
+    heatmap.entrySeq().toArray().map(f)
+  )
+}

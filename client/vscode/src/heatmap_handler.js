@@ -2,6 +2,7 @@ import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import { Effect } from '../vendor/eyeson-common/lib/effects'
 import * as EffectsHandler from './effects_handler'
 import { on, fire } from '../vendor/eyeson-common/lib/event_listener'
+import { Set } from 'immutable'
 
 export const create = (o) => {
   const heatmapHandler = {
@@ -33,11 +34,14 @@ const iterate = (heatmapHandler) => {
     Heatmap.add(
       // Decay latent heat
       Heatmap.map(
-        ([fileLine, heatQuantity]) => [fileLine, heatQuantity * heatmapHander.decay],
-        heatmapHandler.heatmap
+        // TODO: need to sort out time-effect relationship: this is now in realtime, whereas current implementation integrates over time on Effect.heatmap() !!!!!
+        heatmapHandler.heatmap,
+        ([fileLine, heatQuantity]) => [fileLine, heatQuantity * heatmapHandler.decay]
       ),
       // Add active heat sources (effects)
-      heatmapHandler.activeEffects.map(Effect.heatmap).reduce(Heatmap.add)
+      heatmapHandler.activeEffects
+        .map(Effect.heatmap)
+        .reduce(Heatmap.add, Heatmap.create())
       // TODO: heat capacity of a line
     )
   fire(heatmapHandler, 'HeatmapIterated', heatmapHandler.heatmap)

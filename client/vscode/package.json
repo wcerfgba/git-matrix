@@ -26,10 +26,10 @@
 		"@babel/plugin-proposal-class-properties": "^7.0.0-beta.32",
 		"@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.32",
 		"@babel/preset-env": "^7.0.0-beta.32",
-		"nodemon": "^1.17.2",
 		"vscode": "^1.1.5"
 	},
 	"dependencies": {
+		"immutable": "^3.8.2",
 		"isomorphic-fetch": "^2.2.1"
 	}
 }

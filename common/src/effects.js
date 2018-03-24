@@ -52,7 +52,7 @@ export const VisibleFileEffect = {
     range(effect.viewportTopLine,
           effect.viewportBottomLine + 1)
       .map(lineNumber => [ FileLine.create({ ...effect, lineNumber }),
-                           0.1 * (effect.toTime - effect.fromTime) ])
+                           0.01 * (effect.toTime - effect.fromTime) ])
   )
 }
 
@@ -75,6 +75,6 @@ export const CursorPositionEffect = {
 
   heatmap: (effect) => Heatmap.create([[
     FileLine.create({ ...effect, lineNumber: effect.cursorLine }),
-    1.0 * (effect.toTime - effect.fromTime)
+    0.01 * (effect.toTime - effect.fromTime)
   ]])
 }

@@ -1,5 +1,6 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import * as vscode from 'vscode'
+import { on } from '../vendor/eyeson-common/lib/event_listener'
 
 export const create = (o) => {
   const heatmapUIHandler = {
@@ -19,10 +20,17 @@ export const create = (o) => {
 }
 
 const draw = (heatmapUIHandler) => {
-  Heatmap.map(entry => setHeatmapEntryDecoration(
-                        heatmapUIHandler.editorHandler.activeEditor,
-                        entry
-                      ))
+  // TODO: better handling of transience
+  console.log(heatmapUIHandler.heatmapHandler.heatmap)
+  console.log(heatmapUIHandler.editorHandler)
+  if (!heatmapUIHandler.editorHandler.activeEditor) { return; }
+  Heatmap.map(
+    heatmapUIHandler.heatmapHandler.heatmap,
+    entry => setHeatmapEntryDecoration(
+      heatmapUIHandler.editorHandler.activeEditor,
+      entry
+    )
+  )
 }
 
 const setHeatmapEntryDecoration = (
@@ -31,7 +39,7 @@ const setHeatmapEntryDecoration = (
 ) => {
 	editor.setDecorations(
 		vscode.window.createTextEditorDecorationType({
-			overviewRulerColor: `rgba(${heatQuantity * 2}, 0, 0, 1.0)`,
+			overviewRulerColor: `rgba(${Math.floor(heatQuantity) * 2 % 255}, 0, 0, 1.0)`,
 			overviewRulerLane: vscode.OverviewRulerLane.Left,
 		}),
 		[{ range: new vscode.Range(

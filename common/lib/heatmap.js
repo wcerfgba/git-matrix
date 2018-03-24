@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.add = exports.set = exports.get = exports.entries = exports.fileLines = exports.is = exports.create = void 0;
+exports.map = exports.add = exports.set = exports.get = exports.entries = exports.fileLines = exports.is = exports.create = void 0;
 
 var _immutable = require("immutable");
 
@@ -76,7 +76,12 @@ var add = function add(a, b) {
   return (0, _immutable.Set)(_toConsumableArray(fileLines(a)).concat(_toConsumableArray(fileLines(b)))).reduce(function (sum, fileLine) {
     return set(sum, fileLine, get(sum, fileLine) + get(a, fileLine) + get(b, fileLine));
   }, create());
-}; // TODO! : map
-
+};
 
 exports.add = add;
+
+var map = function map(heatmap, f) {
+  return create(heatmap.entrySeq().toArray().map(f));
+};
+
+exports.map = map;
