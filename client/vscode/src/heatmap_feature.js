@@ -1,7 +1,7 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import * as EditorHandler from './editor_handler'
 import * as EffectsHandler from './effects_handler'
-import * as HeatmapHandler from './heatmap_handler'
+import * as HeatmapHandler from '../vendor/eyeson-common/lib/heatmap_handler'
 import * as HeatmapUIHandler from './heatmap_ui_handler'
 import * as vscode from 'vscode'
 import 'isomorphic-fetch'

@@ -1,7 +1,6 @@
-import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
-import { Effect } from '../vendor/eyeson-common/lib/effects'
-import * as EffectsHandler from './effects_handler'
-import { on, fire } from '../vendor/eyeson-common/lib/event_listener'
+import * as Heatmap from './heatmap'
+import { Effect } from './effects'
+import { on, fire } from './event_listener'
 import { Set } from 'immutable'
 
 export const create = (o) => {
@@ -15,7 +14,6 @@ export const create = (o) => {
   }   
   on(heatmapHandler.effectsHandler, 'ActiveEffectsChanged',
 		(activeEffects) => heatmapHandler.activeEffects = activeEffects)
-	// NetworkHandler.on('ReceivedExistingHeatmaps')
   return heatmapHandler
 }
 
@@ -34,7 +32,6 @@ const iterate = (heatmapHandler) => {
     Heatmap.add(
       // Decay latent heat
       Heatmap.map(
-        // TODO: need to sort out time-effect relationship: this is now in realtime, whereas current implementation integrates over time on Effect.heatmap() !!!!!
         heatmapHandler.heatmap,
         ([fileLine, heatQuantity]) => [fileLine, heatQuantity * heatmapHandler.decay]
       ),

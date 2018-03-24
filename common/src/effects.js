@@ -52,7 +52,10 @@ export const VisibleFileEffect = {
     range(effect.viewportTopLine,
           effect.viewportBottomLine + 1)
       .map(lineNumber => [ FileLine.create({ ...effect, lineNumber }),
-                           0.01 * (effect.toTime - effect.fromTime) ])
+                           0.01 ])
+  // We do not scale the heat by the time elapsed because the HeatmapHandler 
+  // is responsible for iterating the model and decaying heat, and we need to
+  // provide it with the instantaneous heat.
   )
 }
 
@@ -75,6 +78,6 @@ export const CursorPositionEffect = {
 
   heatmap: (effect) => Heatmap.create([[
     FileLine.create({ ...effect, lineNumber: effect.cursorLine }),
-    0.01 * (effect.toTime - effect.fromTime)
+    0.1
   ]])
 }

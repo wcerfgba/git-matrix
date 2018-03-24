@@ -1,36 +1,41 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import * as vscode from 'vscode'
+import * as Store from './store'
 import { on } from '../vendor/eyeson-common/lib/event_listener'
+import { assert, isTruthy } from '../vendor/eyeson-common/lib/utils'
 
 export const create = (o) => {
   const heatmapUIHandler = {
-    heatmapHandler: o.heatmapHandler,
-    editorHandler: o.editorHandler
+    editorHandler: o.editorHandler,
+    heatmapStore: o.heatmapStore,
   }
-  // TODO: debounce
-  on(heatmapUIHandler.heatmapHandler, 'HeatmapIterated',
+  on(heatmapUIHandler.heatmapStore, 'HeatmapIterated',
     (heatmap) => draw(heatmapUIHandler))
-  // TODO: if active editor changes, how do i determine what heatmap i should
-  // have?
-  //
-  // the client needs a store (even if just cache), which allows us to work with
-  // multiple heatmaps, and get the correct heatmap when the textdocument 
-  // changes :D
   return heatmapUIHandler
 }
 
 const draw = (heatmapUIHandler) => {
-  // TODO: better handling of transience
-  if (!heatmapUIHandler.editorHandler.activeEditor) { return; }
+  const editor = heatmapUIHandler.editorHandler.activeEditor
+  assert(isTruthy(editor), "No active editor.")
+  const heatmap = getHeatmapForActiveEditor(heatmapUIHandler)
   Heatmap.map(
-    heatmapUIHandler.heatmapHandler.heatmap,
-    entry => setHeatmapEntryDecoration(
-      heatmapUIHandler.editorHandler.activeEditor,
-      entry
-    )
+    heatmap,
+    entry => setHeatmapEntryDecoration(editor, entry)
   )
-  // TODO: this is hw we get the lines boiiiii
-  console.log(heatmapUIHandler.editorHandler.activeEditor._visibleRanges)
+}
+
+const getHeatmapForActiveEditor = (heatmapUIHandler) => {
+  const editor = heatmapUIHandler.editorHandler.activeEditor
+  assert(isTruthy(editor), "No active editor.")
+  const document = editor.document
+  assert(isTruthy(document), "Active editor has no document.")
+  const query = {
+    projectName: '',
+    vcsReference: '',
+    filePath: document.uri // TODO: need to get relative to project root :/
+  }
+  const heatmap = Store.get(heatmapUIHandler.heatmapStore, query)
+  return heatmap
 }
 
 const setHeatmapEntryDecoration = (
