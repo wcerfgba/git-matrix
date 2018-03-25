@@ -8,14 +8,41 @@ export const create = (o) => {
   const heatmapUIHandler = {
     editorHandler: o.editorHandler,
     heatmapStore: o.heatmapStore,
+    activeSimulation: null
   }
-  on(heatmapUIHandler.heatmapStore, 'HeatmapIterated',
-    (heatmap) => draw(heatmapUIHandler))
+  on(heatmapUIHandler.editorHandler, 'ActiveEditorChanged',
+    (editor) => setActiveSimulation(heatmapUIHandler))
+  setActiveSimulation(heatmapUIHandler)
   return heatmapUIHandler
 }
 
+const setActiveSimulation = (heatmapUIHandler) => {
+  const activeEditor = heatmapUIHandler.editorHandler.activeEditor
+  assert(isTruthy(activeEditor), "No active editor.")
+  const document = activeEditor.document
+  assert(isTruthy(document), "Active editor has no document.")
+  const query = {
+    projectName: '',
+    vcsReference: '',
+    filePath: document.uri, // TODO: need to get relative to project root :/
+  }
+  // TODO: sorting/ordering in Store API, better than this cos this is grim
+  const heatmaps = Store.find(heatmapUIHandler.heatmapStore, query)
+  heatmaps.sort((a, b) => a.time - b.time)
+  const heatmap = heatmaps.pop()
+  const heatmapSimulation = HeatmapSimulation.create({
+    heatmap: heatmap,
+    activeEffects: [], // TODO
+  })
+  HeatmapSimulation.iterateToTime(heatmapSimulation, Date.now())
+  on(heatmapSimulation, 'HeatmapIterated',
+    (heatmap) => draw(heatmapUIHandler))
+  HeatmapSimulation.startIterate(heatmapSimulation)
+  heatmapUIHandler.activeSimulation = heatmapSimulation
+}
+
 const draw = (heatmapUIHandler) => {
-  const editor = heatmapUIHandler.editorHandler.activeEditor
+  const activeEditor = heatmapUIHandler.editorHandler.activeEditor
   assert(isTruthy(editor), "No active editor.")
   const heatmap = getHeatmapForActiveEditor(heatmapUIHandler)
   Heatmap.map(
@@ -26,21 +53,13 @@ const draw = (heatmapUIHandler) => {
 
 const getHeatmapForActiveEditor = (heatmapUIHandler) => {
   const editor = heatmapUIHandler.editorHandler.activeEditor
-  assert(isTruthy(editor), "No active editor.")
-  const document = editor.document
-  assert(isTruthy(document), "Active editor has no document.")
-  const query = {
-    projectName: '',
-    vcsReference: '',
-    filePath: document.uri // TODO: need to get relative to project root :/
-  }
-  const heatmap = Store.get(heatmapUIHandler.heatmapStore, query)
+  
   return heatmap
 }
 
 const setHeatmapEntryDecoration = (
 	editor,
-  [fileLine, heatQuantity]	
+  [lineNumber, heatQuantity]	
 ) => {
 	editor.setDecorations(
 		vscode.window.createTextEditorDecorationType({
@@ -48,8 +67,8 @@ const setHeatmapEntryDecoration = (
 			overviewRulerLane: vscode.OverviewRulerLane.Left,
 		}),
 		[{ range: new vscode.Range(
-        new vscode.Position(fileLine.lineNumber, 0),
-        new vscode.Position(fileLine.lineNumber, 0)
+        new vscode.Position(lineNumber.lineNumber, 0),
+        new vscode.Position(lineNumber.lineNumber, 0)
 		) }]
 	)
 } 

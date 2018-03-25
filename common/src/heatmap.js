@@ -1,43 +1,67 @@
 import { Map, Set } from 'immutable'
 import * as FileLine from './file_line'
 
-export const create = (entries = []) => Map(entries)
+export const create = (o) => {
+  return {
+    // Map from line number to heat quantity
+    entries: Map(o.entries || []),
 
-export const is = (o) => (
-  Map.isMap(o) &&
-  o.entries().map(([k, v]) => (
-    FileLine.is(k) &&
-    typeof v === 'number'
-  )).reduce((a, b) => a && b)
-)
+    time: o.time,
+    
+    // Arbitrary reference at each end (repo name)
+    projectName: o.projectName,
 
-export const fileLines = (heatmap) => heatmap.keySeq().toArray()
-export const entries = (heatmap) => heatmap.entrySeq().toArray()
-
-export const get = (heatmap, k) => {
-  return heatmap.get(k) || 0.0
+    // Something usable by the project's configured VCS to determine a set of 
+    // files. We may want to look at the diff with the next revision after 
+    // this one when determining which lines have received effects.
+    vcsReference: o.vcsReference,
+    
+    // Relative to project root.
+    filePath: o.filePath
+  }
 }
 
-export const set = (heatmap, k, v) => {
-  return heatmap.set(k, v)
+export const is = (o) => (
+  Map.isMap(o.entries) &&
+  entries(o).map(([lineNumber, heatQuantity]) => (
+    typeof lineNumber === 'number' &&
+    typeof heatQuantity === 'number'
+  )).reduce((a, b) => a && b) &&
+  typeof o.time === 'number' &&
+  typeof o.projectName === 'string' &&
+  typeof o.vcsReference === 'string' &&
+  typeof o.filePath === 'string'
+)
+
+export const lineNumbers = (heatmap) => heatmap.entries.keySeq().toArray()
+export const entries = (heatmap) => heatmap.entries.entrySeq().toArray()
+
+export const get = (heatmap, lineNumber) => {
+  return heatmap.entries.get(lineNumber) || 0.0
+}
+
+export const set = (heatmap, lineNumber, heatQuantity) => {
+  return heatmap.entries.set(lineNumber, heatQuantity)
 }
 
 export const add = (a, b) => {
   return Set([
-    ...fileLines(a),
-    ...fileLines(b)
+    ...lineNumbers(a),
+    ...lineNumbers(b)
   ]).reduce(
-    (sum, fileLine) => set(sum, fileLine, (
-      get(sum, fileLine) +
-      get(a, fileLine) +
-      get(b, fileLine)
+    (sum, lineNumber) => set(sum, lineNumber, (
+      get(sum, lineNumber) +
+      get(a, lineNumber) +
+      get(b, lineNumber)
     )),
-    create()
+    // Inherit attributes from first argument, but start with an empty entry-set
+    create({ ...a, entries: [] })
   )
 }
 
 export const map = (heatmap, f) => {
-  return create(
-    heatmap.entrySeq().toArray().map(f)
-  )
+  return create({
+    ...heatmap,
+    entries: entries(heatmap).map(f),
+  })
 }
