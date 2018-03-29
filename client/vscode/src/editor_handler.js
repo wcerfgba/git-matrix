@@ -1,12 +1,12 @@
 import * as vscode from 'vscode'
 import { fire } from '../vendor/eyeson-common/lib/event_listener'
 
-export const create = (o) => {
+export const create = (o = {}) => {
   const editorHandler = {
     extensionContext: o.extensionContext,
     activeEditor: null,
     activeDocument: null,
-    eventHandlers: []
+    eventListeners: []
   }
   editorHandler.activeEditor = setActiveEditor(editorHandler, editorHandler.activeEditor)
   vscode.window.onDidChangeActiveTextEditor(

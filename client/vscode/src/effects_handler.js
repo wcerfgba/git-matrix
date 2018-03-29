@@ -3,15 +3,21 @@ import { on, fire } from '../vendor/eyeson-common/lib/event_listener'
 import { Set } from 'immutable'
 import { assert, isFalsey } from '../vendor/eyeson-common/lib/utils'
 
-export const create = (o) => {
+export const create = (o = {}) => {
   const effectsHandler = {
-    effects: o.effects || Set(),
+    effects: Set(o.effects || []),
     iterateInterval: 1000,
     iterateIntervalID: null,
     effectTimestep: 1,
     eventListeners: []
   }
   return effectsHandler
+}
+
+export const getActiveEffects = (effectsHandler) => {
+  return effectsHandler.effects
+    .filter(entry => entry.isActive)
+    .map(entry => entry.effect)
 }
 
 // TODO: handle creation and finalization of effects due to events

@@ -1,6 +1,6 @@
 // A FileLine provides all the information necessary to target a particular 
 // line of a file. 
-export const create = (o) => new class {
+export const create = (o = {}) => new class {
   // Arbitrary reference at each end (repo name)
   projectName = o.projectName
 

@@ -1,9 +1,11 @@
+import 'babel-polyfill'
+
 import * as vscode from 'vscode'
 import * as HeatmapFeature from './heatmap_feature'
 
-export const activate = (extensionContext) => {
+export const activate = async (extensionContext) => {
 	const heatmapFeature = HeatmapFeature.create({
 		extensionContext: extensionContext
 	})
-	HeatmapFeature.activate(heatmapFeature)
+	await HeatmapFeature.activate(heatmapFeature)
 }

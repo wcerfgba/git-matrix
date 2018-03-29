@@ -51,7 +51,7 @@ export const VisibleFileEffect = {
   heatmap: (effect) => Heatmap.create({
     entries: range(effect.viewportTopLine,
                    effect.viewportBottomLine + 1)
-              .map(lineNumber => [ lineNumber, 0.01 ])                                
+              .map(lineNumber => [ lineNumber, 0.01 ])                           
   })
 }
 

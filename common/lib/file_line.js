@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.hashCode = exports.equals = exports.is = exports.create = void 0;
+exports.equals = exports.is = exports.create = void 0;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -13,7 +13,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 // A FileLine provides all the information necessary to target a particular 
 // line of a file. 
-var create = function create(o) {
+var create = function create() {
+  var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   return new (
   /*#__PURE__*/
   function () {
@@ -53,9 +54,19 @@ var create = function create(o) {
       }
     }, {
       key: "hashCode",
-      value: function hashCode() {
-        return _hashCode(this);
-      }
+      value: function (_hashCode) {
+        function hashCode() {
+          return _hashCode.apply(this, arguments);
+        }
+
+        hashCode.toString = function () {
+          return _hashCode.toString();
+        };
+
+        return hashCode;
+      }(function () {
+        return hashCode(this);
+      })
     }]);
 
     return _class2;
@@ -72,20 +83,6 @@ exports.is = is;
 
 var _equals = function _equals(a, b) {
   return a.projectName === b.projectName && a.vcsReference === b.vcsReference && a.filePath === b.filePath && a.lineNumber === b.lineNumber;
-}; // From https://gist.github.com/hyamamoto/fd435505d29ebfa3d9716fd2be8d42f0
-
-
-exports.equals = _equals;
-
-var _hashCode = function _hashCode(fileLine) {
-  var s = JSON.stringify(fileLine);
-  var h = 0,
-      l = s.length,
-      i = 0;
-  if (l > 0) while (i < l) {
-    h = (h << 5) - h + s.charCodeAt(i++) | 0;
-  }
-  return h;
 };
 
-exports.hashCode = _hashCode;
+exports.equals = _equals;

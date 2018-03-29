@@ -6,6 +6,14 @@ export const assert = (p, m) => {
   throw new Error(m)
 }
 
+export const logThrows = (f) => (...args) => {
+  try {
+    return f(...args)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export const range = (from, to, incr = 1, incrFun = x => x + incr) => {
   const range = []
   for (let next = from; next < to; next = incrFun(next)) {
@@ -23,3 +31,6 @@ export const hashCode = (fileLine) => {
       h = (h << 5) - h + s.charCodeAt(i++) | 0;
   return h;
 }
+
+export const isFalsey = (x) => (x || false) == false
+export const isTruthy = (x) => !isFalsey(x)

@@ -1,61 +1,87 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import * as vscode from 'vscode'
-import * as Store from './store'
+import * as HeatmapStore from './heatmap_store'
+import * as HeatmapSimulation from '../vendor/eyeson-common/lib/heatmap_simulation'
+import * as EffectsHandler from './effects_handler'
 import { on } from '../vendor/eyeson-common/lib/event_listener'
-import { assert, isTruthy } from '../vendor/eyeson-common/lib/utils'
+import { assert, isTruthy, logThrows } from '../vendor/eyeson-common/lib/utils'
 
-export const create = (o) => {
+export const create = (o = {}) => {
   const heatmapUIHandler = {
     editorHandler: o.editorHandler,
     heatmapStore: o.heatmapStore,
+    effectsHandler: o.effectsHandler,
+    activeEffects: null,
+    activeHeatmap: null,
     activeSimulation: null
   }
-  on(heatmapUIHandler.editorHandler, 'ActiveEditorChanged',
-    (editor) => setActiveSimulation(heatmapUIHandler))
-  setActiveSimulation(heatmapUIHandler)
+  init(heatmapUIHandler)
   return heatmapUIHandler
 }
 
-const setActiveSimulation = (heatmapUIHandler) => {
+const init = (heatmapUIHandler) => {
+  on(heatmapUIHandler.effectsHandler, 'ActiveEffectsChanged',
+    (effects) => setActiveEffects(heatmapUIHandler))
+  on(heatmapUIHandler.heatmapStore, 'DocumentsChanged',
+    () => setActiveHeatmap(heatmapUIHandler))
+  on(heatmapUIHandler.editorHandler, 'ActiveEditorChanged',
+    (editor) => setActiveHeatmap(heatmapUIHandler))
+  setActiveEffects(heatmapUIHandler)
+  setActiveHeatmap(heatmapUIHandler)
+  setActiveSimulation(heatmapUIHandler)
+}
+
+const setActiveEffects = (heatmapUIHandler) => {
+  heatmapUIHandler.activeEffects = 
+    EffectsHandler.getActiveEffects(heatmapUIHandler.effectsHandler)
+  setActiveSimulation(heatmapUIHandler)
+}
+
+const setActiveHeatmap = logThrows((heatmapUIHandler) => {
   const activeEditor = heatmapUIHandler.editorHandler.activeEditor
   assert(isTruthy(activeEditor), "No active editor.")
   const document = activeEditor.document
   assert(isTruthy(document), "Active editor has no document.")
-  const query = {
+  const filePath = document.uri.path
+  const heatmap = HeatmapStore.findLatest(heatmapUIHandler.heatmapStore, {
     projectName: '',
     vcsReference: '',
-    filePath: document.uri, // TODO: need to get relative to project root :/
-  }
-  // TODO: sorting/ordering in Store API, better than this cos this is grim
-  const heatmaps = Store.find(heatmapUIHandler.heatmapStore, query)
-  heatmaps.sort((a, b) => a.time - b.time)
-  const heatmap = heatmaps.pop()
-  const heatmapSimulation = HeatmapSimulation.create({
-    heatmap: heatmap,
-    activeEffects: [], // TODO
+    filePath, // TODO: need to get relative to project root :/
   })
-  HeatmapSimulation.iterateToTime(heatmapSimulation, Date.now())
+  console.log('dat map', heatmap)
+  heatmapUIHandler.activeHeatmap = heatmap
+  setActiveSimulation(heatmapUIHandler)
+})
+
+const setActiveSimulation = logThrows((heatmapUIHandler) => {
+  assert(isTruthy(heatmapUIHandler.activeHeatmap), "No active heatmap.")
+  const heatmapSimulation = HeatmapSimulation.create({
+    heatmap: heatmapUIHandler.activeHeatmap,
+    activeEffects: heatmapUIHandler.activeEffects
+  })
+  //HeatmapSimulation.iterateToTime(heatmapSimulation, Date.now())
   on(heatmapSimulation, 'HeatmapIterated',
     (heatmap) => draw(heatmapUIHandler))
-  HeatmapSimulation.startIterate(heatmapSimulation)
   heatmapUIHandler.activeSimulation = heatmapSimulation
-}
+  draw(heatmapUIHandler)
 
-const draw = (heatmapUIHandler) => {
-  const activeEditor = heatmapUIHandler.editorHandler.activeEditor
+  console.log(heatmapUIHandler.activeSimulation, Heatmap.entries(heatmapUIHandler.activeHeatmap))
+
+  HeatmapSimulation.startIterate(heatmapUIHandler.activeSimulation)
+})
+
+const draw = logThrows((heatmapUIHandler) => {
+  const editor = heatmapUIHandler.editorHandler.activeEditor
   assert(isTruthy(editor), "No active editor.")
-  const heatmap = getHeatmapForActiveEditor(heatmapUIHandler)
+  const heatmap = heatmapUIHandler.activeSimulation.heatmap
+
+  console.log('draw @ ', Date.now())
+
   Heatmap.map(
     heatmap,
     entry => setHeatmapEntryDecoration(editor, entry)
   )
-}
-
-const getHeatmapForActiveEditor = (heatmapUIHandler) => {
-  const editor = heatmapUIHandler.editorHandler.activeEditor
-  
-  return heatmap
-}
+})
 
 const setHeatmapEntryDecoration = (
 	editor,

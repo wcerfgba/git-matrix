@@ -3,7 +3,7 @@ import { Effect } from './effects'
 import { on, fire } from './event_listener'
 import { Set } from 'immutable'
 
-export const create = (o) => {
+export const create = (o = {}) => {
   const heatmapSimulation = {
     heatmap: o.heatmap || Heatmap.create(),
     activeEffects: Set(o.activeEffects || []),
@@ -13,6 +13,10 @@ export const create = (o) => {
     eventListeners: []
   }
   return heatmapSimulation
+}
+
+export const setActiveEffects = (heatmapSimulation, activeEffects) => {
+  heatmapSimulation.activeEffects = Set(activeEffects)
 }
 
 export const startIterate = (heatmapSimulation) => {

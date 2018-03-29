@@ -3,13 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.map = exports.add = exports.set = exports.get = exports.entries = exports.fileLines = exports.is = exports.create = void 0;
+exports.map = exports.add = exports.set = exports.get = exports.entries = exports.lineNumbers = exports.is = exports.create = void 0;
 
 var _immutable = require("immutable");
 
 var FileLine = _interopRequireWildcard(require("./file_line"));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -28,60 +32,78 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var create = function create() {
-  var entries = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-  return (0, _immutable.Map)(entries);
+  var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return {
+    // Map from line number to heat quantity
+    entries: (0, _immutable.Map)(o.entries || []),
+    time: o.time,
+    // Arbitrary reference at each end (repo name)
+    projectName: o.projectName,
+    // Something usable by the project's configured VCS to determine a set of 
+    // files. We may want to look at the diff with the next revision after 
+    // this one when determining which lines have received effects.
+    vcsReference: o.vcsReference,
+    // Relative to project root.
+    filePath: o.filePath
+  };
 };
 
 exports.create = create;
 
 var is = function is(o) {
-  return _immutable.Map.isMap(o) && o.entries().map(function (_ref) {
+  return _immutable.Map.isMap(o.entries) && entries(o).map(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
-        k = _ref2[0],
-        v = _ref2[1];
+        lineNumber = _ref2[0],
+        heatQuantity = _ref2[1];
 
-    return FileLine.is(k) && typeof v === 'number';
+    return typeof lineNumber === 'number' && typeof heatQuantity === 'number';
   }).reduce(function (a, b) {
     return a && b;
-  });
+  }) && typeof o.time === 'number' && typeof o.projectName === 'string' && typeof o.vcsReference === 'string' && typeof o.filePath === 'string';
 };
 
 exports.is = is;
 
-var fileLines = function fileLines(heatmap) {
-  return heatmap.keySeq().toArray();
+var lineNumbers = function lineNumbers(heatmap) {
+  return heatmap.entries.keySeq().toArray();
 };
 
-exports.fileLines = fileLines;
+exports.lineNumbers = lineNumbers;
 
 var entries = function entries(heatmap) {
-  return heatmap.entrySeq().toArray();
+  return heatmap.entries.entrySeq().toArray();
 };
 
 exports.entries = entries;
 
-var get = function get(heatmap, k) {
-  return heatmap.get(k) || 0.0;
+var get = function get(heatmap, lineNumber) {
+  return heatmap.entries.get(lineNumber) || 0.0;
 };
 
 exports.get = get;
 
-var set = function set(heatmap, k, v) {
-  return heatmap.set(k, v);
+var set = function set(heatmap, lineNumber, heatQuantity) {
+  heatmap.entries = heatmap.entries.set(lineNumber, heatQuantity);
+  return heatmap;
 };
 
 exports.set = set;
 
 var add = function add(a, b) {
-  return (0, _immutable.Set)(_toConsumableArray(fileLines(a)).concat(_toConsumableArray(fileLines(b)))).reduce(function (sum, fileLine) {
-    return set(sum, fileLine, get(sum, fileLine) + get(a, fileLine) + get(b, fileLine));
-  }, create());
+  return (0, _immutable.Set)(_toConsumableArray(lineNumbers(a)).concat(_toConsumableArray(lineNumbers(b)))).reduce(function (sum, lineNumber) {
+    return set(sum, lineNumber, get(sum, lineNumber) + get(a, lineNumber) + get(b, lineNumber));
+  }, // Inherit attributes from first argument, but start with an empty entry-set
+  create(_objectSpread({}, a, {
+    entries: []
+  })));
 };
 
 exports.add = add;
 
 var map = function map(heatmap, f) {
-  return create(heatmap.entrySeq().toArray().map(f));
+  return create(_objectSpread({}, heatmap, {
+    entries: entries(heatmap).map(f)
+  }));
 };
 
 exports.map = map;

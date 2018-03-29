@@ -1,9 +1,8 @@
 import { default as express } from 'express'
 import { default as bodyParser } from 'body-parser'
 import * as Store from './store' 
-//import { Effect } from '../vendor/eyeson-common/lib/effects'
-import * as _Timeline from '../vendor/eyeson-common/lib/timeline'
 import * as Timeline from './timeline'
+import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 
 export const create = ({ logger = (...args) => {},
                          port }) => {
@@ -22,20 +21,19 @@ export const create = ({ logger = (...args) => {},
     }
   })
 
-  app.get('/heatmap', (req, res) => {
+  app.get('/heatmaps', (req, res) => {
     logger(req)
     // TODO: async Store request
     // TODO: bin Timeline (it's just a set of effects bro)
-    const timeline = _Timeline.create(
+    const timeline = Timeline.create(
       Store.query(store, {
         and: req.params
       })
     )
     logger(req, timeline)
-    const heatmap = Timeline.heatmap(timeline).entrySeq().toArray()
-    logger(req, heatmap)
+    const heatmap = Timeline.heatmap(timeline)
     res.status(200).send(JSON.stringify(
-      heatmap,
+      [heatmap],
       null,
       2
     ))

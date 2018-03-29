@@ -1,7 +1,7 @@
 import { Map, Set } from 'immutable'
 import * as FileLine from './file_line'
 
-export const create = (o) => {
+export const create = (o = {}) => {
   return {
     // Map from line number to heat quantity
     entries: Map(o.entries || []),
@@ -41,7 +41,8 @@ export const get = (heatmap, lineNumber) => {
 }
 
 export const set = (heatmap, lineNumber, heatQuantity) => {
-  return heatmap.entries.set(lineNumber, heatQuantity)
+  heatmap.entries = heatmap.entries.set(lineNumber, heatQuantity)
+  return heatmap
 }
 
 export const add = (a, b) => {
@@ -49,11 +50,13 @@ export const add = (a, b) => {
     ...lineNumbers(a),
     ...lineNumbers(b)
   ]).reduce(
-    (sum, lineNumber) => set(sum, lineNumber, (
-      get(sum, lineNumber) +
-      get(a, lineNumber) +
-      get(b, lineNumber)
-    )),
+    (sum, lineNumber) => {
+      return set(sum, lineNumber, (
+        get(sum, lineNumber) +
+        get(a, lineNumber) +
+        get(b, lineNumber)
+      ))
+    },
     // Inherit attributes from first argument, but start with an empty entry-set
     create({ ...a, entries: [] })
   )
