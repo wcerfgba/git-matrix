@@ -3,6 +3,7 @@ import { Effect } from './effects'
 import { on, fire } from './event_listener'
 import { Set } from 'immutable'
 import { assert } from './utils'
+import { log, logMethod, logReturn } from './logging'
 
 export const create = (o = {}) => {
   const heatmapSimulation = {
@@ -26,7 +27,7 @@ export const is = (o) => {
 
 export const setActiveEffects = (heatmapSimulation, activeEffects) => {
   // TODO: why is Heatmap.is lying to me??!?!
-  //assert(is(heatmapSimulation), "Cannot setActiveEffects on non-HeatmapSimulation.")
+  assert(is(heatmapSimulation), "Cannot setActiveEffects on non-HeatmapSimulation.")
   heatmapSimulation.activeEffects = Set(activeEffects)
 }
 
@@ -47,25 +48,30 @@ export const iterateToTime = (heatmapSimulation, endTime) => {
 }
 
 const iterate = (heatmapSimulation) => {
-  console.log('HeatmapSimulation.iterate')
-  console.log(heatmapSimulation)
+  logMethod('HeatmapSimulation.iterate')
+  log('heatmapSimulation', heatmapSimulation)
   const latent = 
     Heatmap.map(
       heatmapSimulation.heatmap,
       ([ lineNumber, heatQuantity ]) =>
         [ lineNumber, heatQuantity * heatmapSimulation.decay ]
     )
-  console.log('latent = ', latent)
+  log('latent', latent)
   
   const active = 
     heatmapSimulation.activeEffects
       .map(Effect.heatmap)
       .reduce(Heatmap.add, Heatmap.create())
-  console.log('active = ', active)
+  log('active', active)
   
   const newHeatmap = Heatmap.add(latent, active)
+  log('newHeatmap', newHeatmap)
+
   newHeatmap.time = heatmapSimulation.heatmap.time + heatmapSimulation.timestep
+  log('time', newHeatmap.time)
 
   heatmapSimulation.heatmap = newHeatmap
   fire(heatmapSimulation, 'HeatmapSimulationIterated', heatmapSimulation)
+
+  logReturn()
 }

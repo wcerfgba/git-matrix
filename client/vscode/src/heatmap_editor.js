@@ -4,8 +4,10 @@ import * as HeatmapSimulation from '../vendor/eyeson-common/lib/heatmap_simulati
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import { VisibleFileEffect, CursorPositionEffect } from '../vendor/eyeson-common/lib/effects'
 import { isFalsey, range } from '../vendor/eyeson-common/lib/utils'
+import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
 
 export const create = (o = {}) => {
+  logMethod('HeatmapEditor.create')
   const heatmapEditor = {
     textEditor: o.textEditor,
     heatmapStore: o.heatmapStore,
@@ -13,18 +15,22 @@ export const create = (o = {}) => {
     iterateIntervalID: null,
     iterateIntervalTimeout: 1000,
   }
+  logReturn('dodgy unloggable here :(')
   return heatmapEditor
 }
 
 export const activate = (heatmapEditor) => {
+  logMethod('HeatmapEditor.activate')
   const heatmap = HeatmapStore.getLatest(
     heatmapEditor.heatmapStore,
     { filePath: filePath(heatmapEditor) }
   )
+  log('heatmap', heatmap)
   const heatmapSimulation = HeatmapSimulation.create({
     heatmap: heatmap,
     activeEffects: getActiveEffects(heatmapEditor)
   })
+  log('heatmapSimulation', heatmapSimulation)
   //HeatmapSimulation.iterateToTime(heatmapSimulation, Date.now())
   HeatmapSimulation.activate(heatmapSimulation)
   heatmapEditor.activeHeatmapSimulation = heatmapSimulation
@@ -33,18 +39,22 @@ export const activate = (heatmapEditor) => {
     () => iterate(heatmapEditor),
     heatmapEditor.iterateIntervalTimeout
   )
+  logReturn()
 }
 
 export const deactivate = (heatmapEditor) => {
+  logMethod('HeatmapEditor.deactivate')
   clearInterval(heatmapEditor.iterateIntervalTimeout)
+  logReturn()
 }
 
 // TODO: iteration schedule
 const iterate = (heatmapEditor) => {
-  console.log('HeatmapEditor.iterate')
-  //console.log(heatmapEditor)
+  logMethod('HeatmapEditor.iterate')
+
+  // TODO: better way to handle this?
   if (isFalsey(heatmapEditor.activeHeatmapSimulation)) {
-    console.log('return // falsey activeHeatmapSimulation')
+    logReturn('falsey activeHeatmapSimulation')
     return
   }
 
@@ -56,11 +66,12 @@ const iterate = (heatmapEditor) => {
   // persist heatmap into store
 
   draw(heatmapEditor)
+
+  logReturn()
 }
 
 const getActiveEffects = (heatmapEditor) => {
-  console.log('HeatmapEditor.getActiveEffects')
-  //console.log(heatmapEditor)
+  logMethod('HeatmapEditor.getActiveEffects')
   const effects = [
     ...heatmapEditor.textEditor._visibleRanges.map(
       (range) => VisibleFileEffect.create({
@@ -75,7 +86,7 @@ const getActiveEffects = (heatmapEditor) => {
       cursorColumn: heatmapEditor.textEditor.selection.active.character
     })
   ]
-  console.log('return ', effects)
+  logReturn(effects)
   return effects
 }
 
@@ -84,24 +95,26 @@ const filePath = (heatmapEditor) => {
   return filePath
 }
 
+
+// TODO: heatmap is behaving as expected but redrawing in vscode is slow/buggy,
+// suggest decreasing frequency for drawing heatmap D:
 const draw = (heatmapEditor) => {
-  console.log('HeatmapEditor.draw')
+  logMethod('HeatmapEditor.draw')
   //console.log(heatmapEditor) // TODO: better fucking logging, srs
   const heatmap = heatmapEditor.activeHeatmapSimulation.heatmap
-  console.log('heatmap = ', heatmap)
+  log('heatmap', heatmap)
 
   Heatmap.map(
     heatmap,
     entry => setHeatmapEntryDecoration(heatmapEditor.textEditor, entry)
   )
+
+  logReturn()
 }
 
 
 // TODO:
-//   better way than lots of decoration types, i don't trust this any more
-//   better logging
 //   some tests
-//   cleanup
 //   persist state
 //   sync state to server
 //   more effects
@@ -111,9 +124,9 @@ const setHeatmapEntryDecoration = (
 	editor,
   [lineNumber, heatQuantity]	
 ) => {
-  console.log('HeatmapEditor.setHeatmapEntryDecoration')
+  logMethod('HeatmapEditor.setHeatmapEntryDecoration')
   //console.log(editor)
-  console.log([lineNumber, heatQuantity])
+  log('[lineNumber, heatQuantity]', [lineNumber, heatQuantity])
   const colorIndex = Math.floor(Math.min(Math.max(0, heatQuantity), 255))
   const decorationType = decorationTypes[colorIndex]
   const decorationRanges = [
@@ -122,8 +135,8 @@ const setHeatmapEntryDecoration = (
       new vscode.Position(lineNumber, 0)
     )
   ]
-  //console.log('decorationRanges = ', decorationRanges)
 	editor.setDecorations(decorationType, decorationRanges)
+  logReturn()
 }
 
 const decorationTypes = range(0, 256).map(i => {

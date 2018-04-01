@@ -1,4 +1,5 @@
 import 'isomorphic-fetch'
+import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
 
 export const create = (o = {}) => {
   const networkHandler = {
@@ -11,9 +12,12 @@ export const create = (o = {}) => {
 }
 
 export const get = async (networkHandler) => {
+  logMethod('NetworkHandler.get')
   const res = await fetch(`${networkHandler.server}/${networkHandler.endpoint}`)
+  log('res', res)
   const json = await res.json()
-  console.log(json)
+  log('json', json)
   const inflated = await networkHandler.inflate(json)
+  logReturn(inflated)
   return inflated
 }

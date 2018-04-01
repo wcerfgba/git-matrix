@@ -5,6 +5,7 @@ import * as vscode from 'vscode'
 import 'isomorphic-fetch'
 import { Set } from 'immutable'
 import { assert } from '../vendor/eyeson-common/lib/utils'
+import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
 
 export const create = (o = {}) => {
 	return {
@@ -30,17 +31,6 @@ export const activate = async (heatmapFeature) => {
   )
 
 	synchronizeActiveHeatmapEditors(heatmapFeature)
-
-	// heatmapFeature.editorEffectsHandler = EditorEffectsHandler.create({
-	// 	extensionContext: heatmapFeature.extensionContext
-	// })
-	// EditorEffectsHandler.init(heatmapFeature.editorEffectsHandler)
-	
-	// heatmapFeature.heatmapUIHandler = HeatmapUIHandler.create({
-	// 	editorEffectsHandler: heatmapFeature.editorEffectsHandler,
-	// 	heatmapStore: heatmapFeature.heatmapStore,
-	// })
-	// HeatmapUIHandler.init(heatmapFeature.heatmapUIHandler)
 }
 
 export const deactivate = (heatmapFeature) => {	
@@ -48,7 +38,8 @@ export const deactivate = (heatmapFeature) => {
 }
 
 const synchronizeActiveHeatmapEditors = (heatmapFeature) => {
-	console.log('HeatmapFeature.synchronizeActiveHeatmapEditors', heatmapFeature)
+	logMethod('HeatmapFeature.synchronizeActiveHeatmapEditors')
+
 	const newActiveHeatmapEditors =
 		vscode.window.visibleTextEditors.map(
 			(textEditor) => {
@@ -56,13 +47,15 @@ const synchronizeActiveHeatmapEditors = (heatmapFeature) => {
 					textEditor: textEditor,
 					heatmapStore: heatmapFeature.heatmapStore
 				})
-				console.log('heatmapEditor = ', heatmapEditor)
 				return heatmapEditor
 			}
 		)
+
 	heatmapFeature.activeHeatmapEditors.map(HeatmapEditor.deactivate)
 	newActiveHeatmapEditors.map(HeatmapEditor.activate)
 	heatmapFeature.activeHeatmapEditors = newActiveHeatmapEditors
-	console.log('heatmapFeature.activeHeatmapEditors = ', heatmapFeature.activeHeatmapEditors)
+
+	log('activeHeatmapEditors', heatmapFeature.activeHeatmapEditors)
+	logReturn()
 }
 

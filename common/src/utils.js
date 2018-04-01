@@ -1,16 +1,14 @@
-export const log = console.log
-export const warn = console.warn
-
 export const assert = (p, m) => {
   if (p) { return p }
   throw new Error(m)
 }
 
+// TODO: bin this?
 export const logThrows = (f) => (...args) => {
   try {
     return f(...args)
   } catch (e) {
-    console.log(e)
+    console.warn(e)
   }
 }
 

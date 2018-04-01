@@ -3,6 +3,7 @@ import * as NetworkHandler from './network_handler'
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import { logThrows } from '../vendor/eyeson-common/lib/utils'
 import { fire } from '../vendor/eyeson-common/lib/event_listener'
+import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
 
 export const create = (o = {}) => {
   const heatmapStore = {
@@ -20,22 +21,27 @@ export const create = (o = {}) => {
 }
 
 export const getLatest = (heatmapStore, query) => {
-  console.log('HeatmapStore.getLatest', heatmapStore, query)
+  logMethod('HeatmapStore.getLatest')
+  log('query', query)
   const heatmaps = Store.find(heatmapStore.store, query)
+  log('heatmaps', heatmaps)
   heatmaps.sort((a, b) => a.time - b.time)
   let heatmap = heatmaps.pop()
-  console.log('heatmap = ', heatmap)
+  log('heatmap', heatmap)
   if (heatmap === undefined) {
+    logReturn(null)
     return null
   }
   heatmap = Heatmap.create(heatmap)
+  logReturn(heatmap)
   return heatmap
 }
 
 export const sync = async (heatmapStore) => {
-  console.log('HeatmapStore.sync', heatmapStore)
+  logMethod('HeatmapStore.sync')
   const heatmaps = await NetworkHandler.get(heatmapStore.networkHandler)
-  console.log('heatmaps = ', heatmaps)
+  log('heatmaps', heatmaps)
   Store.insertMany(heatmapStore.store, heatmaps)
   fire(heatmapStore, 'DocumentsChanged')
+  logReturn()
 }
