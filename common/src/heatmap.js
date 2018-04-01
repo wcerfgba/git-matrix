@@ -2,11 +2,11 @@ import { Map, Set } from 'immutable'
 import * as FileLine from './file_line'
 
 export const create = (o = {}) => {
-  return {
+  const heatmap = {
     // Map from line number to heat quantity
-    entries: Map(o.entries || []),
+    entries: cleanEntries(o.entries),
 
-    time: o.time,
+    time: o.time || Date.now(),
     
     // Arbitrary reference at each end (repo name)
     projectName: o.projectName,
@@ -19,6 +19,18 @@ export const create = (o = {}) => {
     // Relative to project root.
     filePath: o.filePath
   }
+  return heatmap
+}
+
+const cleanEntries = (entries) => {
+  entries = entries || []
+  entries = Map(entries)
+  entries = entries.entrySeq().toArray()
+  entries = entries.map(
+    ([lineNumber, heatQuantity]) => [Number(lineNumber), Number(heatQuantity)]
+  )
+  entries = Map(entries)
+  return entries
 }
 
 export const is = (o) => (
@@ -28,8 +40,8 @@ export const is = (o) => (
     typeof heatQuantity === 'number'
   )).reduce((a, b) => a && b) &&
   typeof o.time === 'number' &&
-  typeof o.projectName === 'string' &&
-  typeof o.vcsReference === 'string' &&
+  // typeof o.projectName === 'string' &&
+  // typeof o.vcsReference === 'string' &&
   typeof o.filePath === 'string'
 )
 
@@ -65,6 +77,6 @@ export const add = (a, b) => {
 export const map = (heatmap, f) => {
   return create({
     ...heatmap,
-    entries: entries(heatmap).map(f),
+    entries: cleanEntries(entries(heatmap).map(f)),
   })
 }

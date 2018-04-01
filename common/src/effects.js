@@ -51,7 +51,7 @@ export const VisibleFileEffect = {
   heatmap: (effect) => Heatmap.create({
     entries: range(effect.viewportTopLine,
                    effect.viewportBottomLine + 1)
-              .map(lineNumber => [ lineNumber, 0.01 ])                           
+              .map(lineNumber => [ lineNumber, 0.1 ])                           
   })
 }
 
@@ -73,6 +73,6 @@ export const CursorPositionEffect = {
   }),
 
   heatmap: (effect) => Heatmap.create({
-    entries: [[ effect.cursorLine, 0.1 ]]
+    entries: [[ effect.cursorLine, 1.0 ]]
   })
 }

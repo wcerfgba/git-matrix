@@ -21,7 +21,7 @@ exports.create = create;
 var query = function query(store, _query) {
   return Timeline.create([_effects.VisibleFileEffect.create({
     viewportTopLine: 1,
-    viewportBottomLine: 200
+    viewportBottomLine: 20
   }), _effects.CursorPositionEffect.create({
     cursorLine: 2,
     cursorColumn: 20

@@ -25,16 +25,17 @@ export const is = (o) => {
 }
 
 export const setActiveEffects = (heatmapSimulation, activeEffects) => {
-  assert(is(heatmapSimulation), "Cannot setActiveEffects on non-HeatmapSimulation.")
+  // TODO: why is Heatmap.is lying to me??!?!
+  //assert(is(heatmapSimulation), "Cannot setActiveEffects on non-HeatmapSimulation.")
   heatmapSimulation.activeEffects = Set(activeEffects)
 }
 
-export const startIterate = (heatmapSimulation) => {
+export const activate = (heatmapSimulation) => {
   heatmapSimulation.iterateIntervalID =
     setInterval(() => iterate(heatmapSimulation), heatmapSimulation.iterateInterval)
 }
 
-export const stopIterate = (heatmapSimulation) => {
+export const deactivate = (heatmapSimulation) => {
   clearInterval(heatmapSimulation.iterateIntervalID)
   heatmapSimulation.iterateIntervalID = null
 }
@@ -46,22 +47,25 @@ export const iterateToTime = (heatmapSimulation, endTime) => {
 }
 
 const iterate = (heatmapSimulation) => {
-  const newHeatmap =
-    Heatmap.add(
-      // Decay latent heat
-      Heatmap.map(
-        heatmapSimulation.heatmap,
-        ([ lineNumber, heatQuantity ]) =>
-          [ lineNumber, heatQuantity * heatmapSimulation.decay ]
-      ),
-      // Add active heat sources (effects)
-      heatmapSimulation.activeEffects
-        .map(Effect.heatmap)
-        .reduce(Heatmap.add, Heatmap.create())
-      // TODO: heat capacity of a line
+  console.log('HeatmapSimulation.iterate')
+  console.log(heatmapSimulation)
+  const latent = 
+    Heatmap.map(
+      heatmapSimulation.heatmap,
+      ([ lineNumber, heatQuantity ]) =>
+        [ lineNumber, heatQuantity * heatmapSimulation.decay ]
     )
-  // Advance time
+  console.log('latent = ', latent)
+  
+  const active = 
+    heatmapSimulation.activeEffects
+      .map(Effect.heatmap)
+      .reduce(Heatmap.add, Heatmap.create())
+  console.log('active = ', active)
+  
+  const newHeatmap = Heatmap.add(latent, active)
   newHeatmap.time = heatmapSimulation.heatmap.time + heatmapSimulation.timestep
+
   heatmapSimulation.heatmap = newHeatmap
   fire(heatmapSimulation, 'HeatmapSimulationIterated', heatmapSimulation)
 }

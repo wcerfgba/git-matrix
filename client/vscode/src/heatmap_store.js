@@ -16,21 +16,26 @@ export const create = (o = {}) => {
     }),
     eventListeners: []
   }
-  console.log(heatmapStore)
   return heatmapStore
 }
 
-export const findLatest = (heatmapStore, query) => {
+export const getLatest = (heatmapStore, query) => {
+  console.log('HeatmapStore.getLatest', heatmapStore, query)
   const heatmaps = Store.find(heatmapStore.store, query)
   heatmaps.sort((a, b) => a.time - b.time)
-  const heatmap = heatmaps.pop()
+  let heatmap = heatmaps.pop()
+  console.log('heatmap = ', heatmap)
+  if (heatmap === undefined) {
+    return null
+  }
+  heatmap = Heatmap.create(heatmap)
   return heatmap
 }
 
 export const sync = async (heatmapStore) => {
-  console.log('off for heatmaps')
+  console.log('HeatmapStore.sync', heatmapStore)
   const heatmaps = await NetworkHandler.get(heatmapStore.networkHandler)
-  console.log('got heatmaps', heatmaps)
+  console.log('heatmaps = ', heatmaps)
   Store.insertMany(heatmapStore.store, heatmaps)
   fire(heatmapStore, 'DocumentsChanged')
 }

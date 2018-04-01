@@ -1,7 +1,6 @@
 import loki from 'lokijs'
 
 export const create = (o = {}) => {
-  console.log(loki)
   const store = {
     name: o.name,
     dbType: 'lokijs',

@@ -33,10 +33,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var create = function create() {
   var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return {
+  var heatmap = {
     // Map from line number to heat quantity
-    entries: (0, _immutable.Map)(o.entries || []),
-    time: o.time,
+    entries: cleanEntries(o.entries),
+    time: o.time || Date.now(),
     // Arbitrary reference at each end (repo name)
     projectName: o.projectName,
     // Something usable by the project's configured VCS to determine a set of 
@@ -46,20 +46,38 @@ var create = function create() {
     // Relative to project root.
     filePath: o.filePath
   };
+  return heatmap;
 };
 
 exports.create = create;
 
-var is = function is(o) {
-  return _immutable.Map.isMap(o.entries) && entries(o).map(function (_ref) {
+var cleanEntries = function cleanEntries(entries) {
+  entries = entries || [];
+  entries = (0, _immutable.Map)(entries);
+  entries = entries.entrySeq().toArray();
+  entries = entries.map(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         lineNumber = _ref2[0],
         heatQuantity = _ref2[1];
 
+    return [Number(lineNumber), Number(heatQuantity)];
+  });
+  entries = (0, _immutable.Map)(entries);
+  return entries;
+};
+
+var is = function is(o) {
+  return _immutable.Map.isMap(o.entries) && entries(o).map(function (_ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+        lineNumber = _ref4[0],
+        heatQuantity = _ref4[1];
+
     return typeof lineNumber === 'number' && typeof heatQuantity === 'number';
   }).reduce(function (a, b) {
     return a && b;
-  }) && typeof o.time === 'number' && typeof o.projectName === 'string' && typeof o.vcsReference === 'string' && typeof o.filePath === 'string';
+  }) && typeof o.time === 'number' && // typeof o.projectName === 'string' &&
+  // typeof o.vcsReference === 'string' &&
+  typeof o.filePath === 'string';
 };
 
 exports.is = is;
@@ -102,7 +120,7 @@ exports.add = add;
 
 var map = function map(heatmap, f) {
   return create(_objectSpread({}, heatmap, {
-    entries: entries(heatmap).map(f)
+    entries: cleanEntries(entries(heatmap).map(f))
   }));
 };
 

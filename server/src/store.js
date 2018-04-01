@@ -8,7 +8,7 @@ export const query = (store, query) => {
   return Timeline.create([
     VisibleFileEffect.create({
       viewportTopLine: 1,
-      viewportBottomLine: 200
+      viewportBottomLine: 20
     }),
     CursorPositionEffect.create({
       cursorLine: 2,
