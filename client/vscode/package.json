@@ -17,15 +17,19 @@
 	"scripts": {
 		"build": "babel src --out-dir out",
 		"watch": "nodemon --watch src --exec yarn build",
-		"postinstall": "node ./node_modules/vscode/bin/install"
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "jest"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.0.0-beta.32",
-		"@babel/core": "^7.0.0-beta.32",
+		"@babel/core": "^7.0.0-beta.42",
 		"@babel/node": "^7.0.0-beta.42",
 		"@babel/plugin-proposal-class-properties": "^7.0.0-beta.32",
 		"@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.32",
 		"@babel/preset-env": "^7.0.0-beta.32",
+		"babel-core": "^7.0.0-0",
+		"babel-jest": "^22.4.3",
+		"jest": "^22.4.3",
 		"nodemon": "^1.17.3",
 		"vscode": "^1.1.5"
 	},

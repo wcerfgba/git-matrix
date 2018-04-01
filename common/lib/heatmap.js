@@ -48,11 +48,6 @@ var create = function create() {
     // Relative to project root.
     filePath: o.filePath
   };
-
-  heatmap.toJSON = function () {
-    return toJSON(heatmap);
-  };
-
   return heatmap;
 };
 
@@ -93,7 +88,7 @@ var is = function is(o) {
     return typeof lineNumber === 'number' && typeof heatQuantity === 'number';
   }).reduce(function (a, b) {
     return a && b;
-  }) && typeof o.time === 'number' && // typeof o.projectName === 'string' &&
+  }, true) && typeof o.time === 'number' && // typeof o.projectName === 'string' &&
   // typeof o.vcsReference === 'string' &&
   typeof o.filePath === 'string';
 };

@@ -14,7 +14,6 @@ export const create = (o = {}) => {
     decay: 0.9,  // TODO: tweak model numbers (also effect hQ's)
     eventListeners: []
   }
-  heatmapSimulation.toJSON = () => toJSON(heatmapSimulation)
   return heatmapSimulation
 }
 
@@ -30,7 +29,7 @@ export const toJSON = (heatmapSimulation) => {
 // TODO: more regimented typing and assertion across the codebase
 export const is = (o) => {
   return (
-    Heatmap.is(o.heatmap) &&
+   // Heatmap.is(o.heatmap) &&
     Set.isSet(o.activeEffects)
   )
 }

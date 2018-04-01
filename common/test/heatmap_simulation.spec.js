@@ -61,10 +61,8 @@ describe('HeatmapSimulation', () => {
           })
         ]
       })
-      expectation = JSON.stringify(expectation, null, 2)
       HeatmapSimulation.iterate(subject)
-      subject = JSON.stringify(subject, null, 2) 
-      expect(subject).toMatchObject(expectation)
+      expect(subject).toEqual(expectation)
     })
   })
 })

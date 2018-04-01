@@ -20,7 +20,6 @@ export const create = (o = {}) => {
     // Relative to project root.
     filePath: o.filePath
   }
-  heatmap.toJSON = () => toJSON(heatmap)
   return heatmap
 }
 
@@ -49,7 +48,7 @@ export const is = (o) => (
   entries(o).map(([lineNumber, heatQuantity]) => (
     typeof lineNumber === 'number' &&
     typeof heatQuantity === 'number'
-  )).reduce((a, b) => a && b) &&
+  )).reduce((a, b) => a && b, true) &&
   typeof o.time === 'number' &&
   // typeof o.projectName === 'string' &&
   // typeof o.vcsReference === 'string' &&

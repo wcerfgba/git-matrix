@@ -19,6 +19,11 @@ export const create = (o = {}) => {
   return heatmapEditor
 }
 
+const filePath = (heatmapEditor) => {
+  const filePath = heatmapEditor.textEditor.document.fileName
+  return filePath
+}
+
 export const activate = (heatmapEditor) => {
   logMethod('HeatmapEditor.activate')
   const heatmap = HeatmapStore.getLatest(
@@ -90,11 +95,6 @@ const getActiveEffects = (heatmapEditor) => {
   return effects
 }
 
-const filePath = (heatmapEditor) => {
-  const filePath = heatmapEditor.textEditor.document.fileName
-  return filePath
-}
-
 
 // TODO: heatmap is behaving as expected but redrawing in vscode is slow/buggy,
 // suggest decreasing frequency for drawing heatmap D:
@@ -125,7 +125,6 @@ const setHeatmapEntryDecoration = (
   [lineNumber, heatQuantity]	
 ) => {
   logMethod('HeatmapEditor.setHeatmapEntryDecoration')
-  //console.log(editor)
   log('[lineNumber, heatQuantity]', [lineNumber, heatQuantity])
   const colorIndex = Math.floor(Math.min(Math.max(0, heatQuantity), 255))
   const decorationType = decorationTypes[colorIndex]
