@@ -1,7 +1,5 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
-import * as NetworkHandler from './network_handler'
-import * as EditorHandler from './editor_handler'
-import * as EffectsHandler from './effects_handler'
+import * as EditorEffectsHandler from './editor_effects_handler'
 import * as HeatmapStore from './heatmap_store'
 import * as HeatmapUIHandler from './heatmap_ui_handler'
 import * as vscode from 'vscode'
@@ -12,29 +10,55 @@ export const create = (o = {}) => {
 	return {
 		active: false,
 		extensionContext: o.extensionContext,
-		editorHandler: null,
-		effectsHandler: null,
 		heatmapStore: null,
-		heatmapUIHandler: null
+		activeHeatmapEditors: Set()
 	}
 }
 
 export const activate = async (heatmapFeature) => {
 	assert(heatmapFeature.active === false, "Cannot activate already-active heatmap feature.")
 	heatmapFeature.active = true
-	heatmapFeature.editorHandler = EditorHandler.create({
-		extensionContext: heatmapFeature.extensionContext
-	})
-	heatmapFeature.effectsHandler = EffectsHandler.create()
+
 	heatmapFeature.heatmapStore = HeatmapStore.create()
+	// TODO: should be activate, start a timer 
 	await HeatmapStore.sync(heatmapFeature.heatmapStore)
-	heatmapFeature.heatmapUIHandler = HeatmapUIHandler.create({
-		editorHandler: heatmapFeature.editorHandler,
-		heatmapStore: heatmapFeature.heatmapStore,
-		effectsHandler: heatmapFeature.effectsHandler
-	})
+
+	vscode.window.onDidChangeVisibleTextEditors(
+    () => synchronizeActiveHeatmapEditors(heatmapFeature),
+    null,
+    editorEffectsHandler.extensionContext.subscriptions
+  )
+
+	synchronizeActiveHeatmapEditors(heatmapFeature)
+
+	// heatmapFeature.editorEffectsHandler = EditorEffectsHandler.create({
+	// 	extensionContext: heatmapFeature.extensionContext
+	// })
+	// EditorEffectsHandler.init(heatmapFeature.editorEffectsHandler)
+	
+	// heatmapFeature.heatmapUIHandler = HeatmapUIHandler.create({
+	// 	editorEffectsHandler: heatmapFeature.editorEffectsHandler,
+	// 	heatmapStore: heatmapFeature.heatmapStore,
+	// })
+	// HeatmapUIHandler.init(heatmapFeature.heatmapUIHandler)
 }
 
 export const deactivate = (heatmapFeature) => {	
 	// TODO
 }
+
+const synchronizeActiveHeatmapEditors = (heatmapFeature) => {
+	const newActiveHeatmapEditors =
+		vscode.window.visibleTextEditors.map(
+			(textEditor) => {
+				const heatmapEditor = HeatmapEditor.create({
+					textEditor: textEditor,
+					heatmapStore: heatmapFeature.heatmapStore
+				})
+				return heatmapEditor
+			}
+		)
+	heatmapFeature.activeHeatmapEditors.map(HeatmapEditor.deactivate)
+	heatmapFeature.activeHeatmapEditors = newActiveHeatmapEditors
+}
+

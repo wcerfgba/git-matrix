@@ -2,43 +2,44 @@ import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import * as vscode from 'vscode'
 import * as HeatmapStore from './heatmap_store'
 import * as HeatmapSimulation from '../vendor/eyeson-common/lib/heatmap_simulation'
-import * as EffectsHandler from './effects_handler'
+import * as EditorEffectsHandler from './editor_effects_handler'
 import { on } from '../vendor/eyeson-common/lib/event_listener'
 import { assert, isTruthy, logThrows } from '../vendor/eyeson-common/lib/utils'
 
 export const create = (o = {}) => {
   const heatmapUIHandler = {
-    editorHandler: o.editorHandler,
     heatmapStore: o.heatmapStore,
-    effectsHandler: o.effectsHandler,
+    editorEffectsHandler: o.editorEffectsHandler,
     activeEffects: null,
     activeHeatmap: null,
     activeSimulation: null
   }
-  init(heatmapUIHandler)
   return heatmapUIHandler
 }
 
-const init = (heatmapUIHandler) => {
-  on(heatmapUIHandler.effectsHandler, 'ActiveEffectsChanged',
+export const init = (heatmapUIHandler) => {
+  on(heatmapUIHandler.editorEffectsHandler, 'ActiveEffectsChanged',
     (effects) => setActiveEffects(heatmapUIHandler))
   on(heatmapUIHandler.heatmapStore, 'DocumentsChanged',
     () => setActiveHeatmap(heatmapUIHandler))
-  on(heatmapUIHandler.editorHandler, 'ActiveEditorChanged',
+  on(heatmapUIHandler.editorEffectsHandler, 'ActiveEditorChanged',
     (editor) => setActiveHeatmap(heatmapUIHandler))
-  setActiveEffects(heatmapUIHandler)
-  setActiveHeatmap(heatmapUIHandler)
-  setActiveSimulation(heatmapUIHandler)
+  // setActiveEffects(heatmapUIHandler)
+  // setActiveHeatmap(heatmapUIHandler)
+  // setActiveSimulation(heatmapUIHandler)
 }
 
-const setActiveEffects = (heatmapUIHandler) => {
+const setActiveEffects = logThrows((heatmapUIHandler) => {
   heatmapUIHandler.activeEffects = 
-    EffectsHandler.getActiveEffects(heatmapUIHandler.effectsHandler)
-  setActiveSimulation(heatmapUIHandler)
-}
+    EditorEffectsHandler.getActiveEffects(heatmapUIHandler.editorEffectsHandler)
+  HeatmapSimulation.setActiveEffects(
+    heatmapUIHandler.heatmapSimulation,
+    heatmapUIHandler.activeEffects
+  )
+})
 
 const setActiveHeatmap = logThrows((heatmapUIHandler) => {
-  const activeEditor = heatmapUIHandler.editorHandler.activeEditor
+  const activeEditor = heatmapUIHandler.editorEffectsHandler.activeEditor
   assert(isTruthy(activeEditor), "No active editor.")
   const document = activeEditor.document
   assert(isTruthy(document), "Active editor has no document.")
@@ -60,22 +61,20 @@ const setActiveSimulation = logThrows((heatmapUIHandler) => {
     activeEffects: heatmapUIHandler.activeEffects
   })
   //HeatmapSimulation.iterateToTime(heatmapSimulation, Date.now())
-  on(heatmapSimulation, 'HeatmapIterated',
-    (heatmap) => draw(heatmapUIHandler))
+  on(heatmapSimulation, 'HeatmapSimulationIterated',
+    (heatmapSimulation) => draw(heatmapUIHandler))
   heatmapUIHandler.activeSimulation = heatmapSimulation
-  draw(heatmapUIHandler)
-
-  console.log(heatmapUIHandler.activeSimulation, Heatmap.entries(heatmapUIHandler.activeHeatmap))
-
+  //draw(heatmapUIHandler)
   HeatmapSimulation.startIterate(heatmapUIHandler.activeSimulation)
 })
 
 const draw = logThrows((heatmapUIHandler) => {
-  const editor = heatmapUIHandler.editorHandler.activeEditor
+  const editor = heatmapUIHandler.editorEffectsHandler.activeEditor
   assert(isTruthy(editor), "No active editor.")
   const heatmap = heatmapUIHandler.activeSimulation.heatmap
 
   console.log('draw @ ', Date.now())
+  console.log(heatmap)
 
   Heatmap.map(
     heatmap,

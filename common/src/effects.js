@@ -16,8 +16,8 @@ export const Effect = {
 
   create: (o) => ({
     effectType: o.effectType,
-    fromTime: o.fromTime,
-    toTime: o.toTime,
+    fromTime: o.fromTime || Date.now(),
+    toTime: o.toTime || Date.now(),
     projectName: o.projectName,
     vcsReference: o.vcsReference
   }),

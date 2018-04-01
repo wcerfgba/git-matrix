@@ -3,6 +3,7 @@ import * as File from './file'
 export const create = (o = {}) => {
   return {
     ...File.create(o),
-    lineNumber: o.lineNumber
+    fromLineNumber: o.fromLineNumber,
+    toLineNumber: o.toLineNumber
   }
 }

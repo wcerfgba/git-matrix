@@ -16,11 +16,13 @@
     "babel-jest": "^23.0.0-alpha.0",
     "isomorphic-fetch": "^2.2.1",
     "jest": "^22.4.2",
+    "nodemon": "^1.17.3",
     "regenerator-runtime": "^0.11.1"
   },
   "scripts": {
     "link": "(mkdir node_modules || true) && ln -nsf ../../common node_modules/eyeson-common",
     "build": "babel src --out-dir lib",
+    "watch": "nodemon src/index.js --exec babel-node",
     "start": "node lib/index.js",
     "test": "jest"
   },

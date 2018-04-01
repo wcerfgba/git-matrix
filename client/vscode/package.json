@@ -16,7 +16,7 @@
 	"main": "./out/extension.js",
 	"scripts": {
 		"build": "babel src --out-dir out",
-		"watch": "babel -w src --out-dir out",
+		"watch": "nodemon --watch src --exec yarn build",
 		"postinstall": "node ./node_modules/vscode/bin/install"
 	},
 	"devDependencies": {
@@ -26,12 +26,14 @@
 		"@babel/plugin-proposal-class-properties": "^7.0.0-beta.32",
 		"@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.32",
 		"@babel/preset-env": "^7.0.0-beta.32",
+		"nodemon": "^1.17.3",
 		"vscode": "^1.1.5"
 	},
 	"dependencies": {
 		"babel-polyfill": "^6.26.0",
 		"immutable": "^3.8.2",
 		"isomorphic-fetch": "^2.2.1",
-		"lokijs": "^1.5.3"
+		"lokijs": "^1.5.3",
+		"nodegit": "^0.21.2"
 	}
 }
