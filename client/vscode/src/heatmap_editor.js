@@ -114,7 +114,7 @@ const setHeatmapEntryDecoration = (
   console.log('HeatmapEditor.setHeatmapEntryDecoration')
   //console.log(editor)
   console.log([lineNumber, heatQuantity])
-  const colorIndex = Math.min(Math.floor(heatQuantity * 10), 255)
+  const colorIndex = Math.floor(Math.min(Math.max(0, heatQuantity), 255))
   const decorationType = decorationTypes[colorIndex]
   const decorationRanges = [
     new vscode.Range(

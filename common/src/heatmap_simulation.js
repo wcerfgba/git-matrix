@@ -10,7 +10,7 @@ export const create = (o = {}) => {
     activeEffects: Set(o.activeEffects || []),
     timestep: 1,
     iterateInterval: 1000,
-    decay: 0.99,  // TODO: tweak model numbers (also effect hQ's)
+    decay: 0.9,  // TODO: tweak model numbers (also effect hQ's)
     eventListeners: []
   }
   return heatmapSimulation
