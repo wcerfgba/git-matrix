@@ -14,7 +14,17 @@ export const create = (o = {}) => {
     decay: 0.9,  // TODO: tweak model numbers (also effect hQ's)
     eventListeners: []
   }
+  heatmapSimulation.toJSON = () => toJSON(heatmapSimulation)
   return heatmapSimulation
+}
+
+export const toJSON = (heatmapSimulation) => {
+  const json = {
+    ...heatmapSimulation,
+    activeEffects: heatmapSimulation.activeEffects.entrySeq().toArray()
+  }
+  delete json.toJSON
+  return json
 }
 
 // TODO: more regimented typing and assertion across the codebase
@@ -47,7 +57,7 @@ export const iterateToTime = (heatmapSimulation, endTime) => {
   }
 }
 
-const iterate = (heatmapSimulation) => {
+export const iterate = (heatmapSimulation) => {
   logMethod('HeatmapSimulation.iterate')
   log('heatmapSimulation', heatmapSimulation)
   const latent = 
@@ -71,7 +81,7 @@ const iterate = (heatmapSimulation) => {
   log('time', newHeatmap.time)
 
   heatmapSimulation.heatmap = newHeatmap
-  fire(heatmapSimulation, 'HeatmapSimulationIterated', heatmapSimulation)
+  //fire(heatmapSimulation, 'HeatmapSimulationIterated', heatmapSimulation)
 
   logReturn()
 }

@@ -1,5 +1,6 @@
 import { Map, Set } from 'immutable'
 import * as FileLine from './file_line'
+import { log, logMethod, logReturn } from './logging'
 
 export const create = (o = {}) => {
   const heatmap = {
@@ -19,6 +20,7 @@ export const create = (o = {}) => {
     // Relative to project root.
     filePath: o.filePath
   }
+  heatmap.toJSON = () => toJSON(heatmap)
   return heatmap
 }
 
@@ -31,6 +33,15 @@ const cleanEntries = (entries) => {
   )
   entries = Map(entries)
   return entries
+}
+
+export const toJSON = (heatmap) => {
+  const json = {
+    ...heatmap,
+    entries: entries(heatmap)
+  }
+  delete json.toJSON
+  return json
 }
 
 export const is = (o) => (
@@ -75,8 +86,15 @@ export const add = (a, b) => {
 }
 
 export const map = (heatmap, f) => {
-  return create({
+  logMethod('Heatmap.map')
+  const originalEntries = entries(heatmap)
+  log('originalEntries', originalEntries)
+  const mappedEntries = originalEntries.map(f)
+  log('mappedEntries', mappedEntries)
+  const newHeatmap = create({
     ...heatmap,
-    entries: cleanEntries(entries(heatmap).map(f)),
+    entries: mappedEntries,
   })
+  logReturn(newHeatmap)
+  return newHeatmap
 }

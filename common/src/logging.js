@@ -2,16 +2,17 @@ import * as util from 'util'
 
 const logState = new class {
   stack = []
-  filter = (logLine) => true
+  filter = (logLine) => false   // No logging by default
 }
 
 export const log = (...args) => {
-  const logLine = args.map((obj) => {
+  let logLine = args
+  if (!logState.filter([...logState.stack, ...logLine])) { return }
+  logLine = logLine.map((obj) => {
     return util.inspect(obj, {
       depth: 1
     })
   })
-  if (!logState.filter([...logState.stack, ...logLine])) { return }
   const indent = ' '.repeat(logState.stack.length * 2)
   const logEntry = indent + logLine.join('\n' + indent) + '\n'
   console.log(logEntry)
