@@ -1,8 +1,21 @@
-import * as Heatmap from './heatmap'
-import * as FileLine from './file_line'
-import { range } from './utils'
+import * as Heatmap from '../heatmap'
+import * as FileLine from '../file_line'
+import { range } from '../utils'
+import { Record } from 'immutable'
+
+export { default as CursorPositionEffect } from './cursor_position_effect'
 
 export const Effect = {
+  defaultAttrs: {
+    effectType: null,
+    // TODO: store the time?
+    fromTime: null,
+    toTime: null,
+    // TODO: fix File man!
+    projectName: null,
+    vcsReference: null,
+  },
+  
   is: (o) => (
     typeof o.effectType === 'string' &&
     typeof o.fromTime === 'number' &&
@@ -14,13 +27,13 @@ export const Effect = {
      o.effectType === 'CursorPositionEffect')
   ),
 
-  create: (o) => ({
-    effectType: o.effectType,
-    fromTime: o.fromTime || Date.now(),
-    toTime: o.toTime || Date.now(),
-    projectName: o.projectName,
-    vcsReference: o.vcsReference
-  }),
+  create: (o) => {
+    switch (o.effectType) {
+      case 'VisibleFileEffect': return VisibleFileEffect.create(o)
+      case 'CursorPositionEffect': return CursorPositionEffect.create(o)
+      default: return null; // TODO: error handling!!!!!
+    }
+  },
 
   heatmap: (effect) => {
     switch (effect.effectType) {
@@ -40,39 +53,19 @@ export const VisibleFileEffect = {
     typeof o.viewportBottomLine === 'number'
   ),
 
-  create: (o) => ({
-    ...Effect.create(o),
-    effectType: 'VisibleFileEffect',
-    filePath: o.filePath,
-    viewportTopLine: o.viewportTopLine,
-    viewportBottomLine: o.viewportBottomLine
-  }),
+  create: (o) => {
+    return new (Record({
+      ...Effect.create(o),
+      effectType: 'VisibleFileEffect',
+      filePath: o.filePath,
+      viewportTopLine: o.viewportTopLine,
+      viewportBottomLine: o.viewportBottomLine
+    }))()
+  },
 
   heatmap: (effect) => Heatmap.create({
     entries: range(effect.viewportTopLine,
                    effect.viewportBottomLine + 1)
               .map(lineNumber => [ lineNumber, 5.0 ])                           
-  })
-}
-
-export const CursorPositionEffect = {
-  is: (o) => (
-    Effect.is(o) &&
-    o.effectType === 'CursorPositionEffect' &&
-    typeof o.filePath === 'string' &&
-    typeof o.cursorLine === 'number' &&
-    typeof o.cursorColumn === 'number'
-  ),
-
-  create: (o) => ({
-    ...Effect.create(o),
-    effectType: 'CursorPositionEffect',
-    filePath: o.filePath,
-    cursorLine: o.cursorLine,
-    cursorColumn: o.cursorColumn
-  }),
-
-  heatmap: (effect) => Heatmap.create({
-    entries: [[ effect.cursorLine, 50.0 ]]
   })
 }

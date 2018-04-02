@@ -9,7 +9,7 @@ export const create = (o = {}) => {
   const heatmapSimulation = {
     heatmap: o.heatmap || Heatmap.create(),
     activeEffects: Set(o.activeEffects || []),
-    timestep: 1,
+    timestep: o.timestep || 1,
     iterateInterval: 1000,
     decay: 0.9,  // TODO: tweak model numbers (also effect hQ's)
     eventListeners: []
@@ -38,6 +38,10 @@ export const setActiveEffects = (heatmapSimulation, activeEffects) => {
   // TODO: why is Heatmap.is lying to me??!?!
   assert(is(heatmapSimulation), "Cannot setActiveEffects on non-HeatmapSimulation.")
   heatmapSimulation.activeEffects = Set(activeEffects)
+}
+
+export const getActiveEffects = (heatmapSimulation) => {
+  return heatmapSimulation.activeEffects.entrySeq().toArray()
 }
 
 export const activate = (heatmapSimulation) => {

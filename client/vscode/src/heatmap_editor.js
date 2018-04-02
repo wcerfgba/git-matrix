@@ -13,7 +13,7 @@ export const create = (o = {}) => {
     heatmapStore: o.heatmapStore,
     activeHeatmapSimulation: null,
     iterateIntervalID: null,
-    iterateIntervalTimeout: 1000,
+    iterateIntervalTimeout: 5000,
   }
   logReturn('dodgy unloggable here :(')
   return heatmapEditor
@@ -32,18 +32,26 @@ export const activate = (heatmapEditor) => {
   )
   log('heatmap', heatmap)
   const heatmapSimulation = HeatmapSimulation.create({
+    timestep: 0.1,
     heatmap: heatmap,
     activeEffects: getActiveEffects(heatmapEditor)
   })
   log('heatmapSimulation', heatmapSimulation)
+
+  // We should probably advance...
   //HeatmapSimulation.iterateToTime(heatmapSimulation, Date.now())
-  HeatmapSimulation.activate(heatmapSimulation)
+
+  // ... but we iterate to our own interval
+  //HeatmapSimulation.activate(heatmapSimulation)
+
   heatmapEditor.activeHeatmapSimulation = heatmapSimulation
 
   heatmapEditor.iterateIntervalID = setInterval(
     () => iterate(heatmapEditor),
     heatmapEditor.iterateIntervalTimeout
   )
+  iterate(heatmapEditor)
+
   logReturn()
 }
 
@@ -53,7 +61,6 @@ export const deactivate = (heatmapEditor) => {
   logReturn()
 }
 
-// TODO: iteration schedule
 const iterate = (heatmapEditor) => {
   logMethod('HeatmapEditor.iterate')
 
@@ -63,17 +70,45 @@ const iterate = (heatmapEditor) => {
     return
   }
 
-  HeatmapSimulation.setActiveEffects(
-    heatmapEditor.activeHeatmapSimulation,
-    getActiveEffects(heatmapEditor)
+  let iterationCount = 1
+  const shouldSetActiveEffects = () => iterationCount % 2 === 0
+  const shouldDraw = () => iterationCount % 50 === 0
+  timeoutChain(
+    () => {
+      logMethod('HeatmapEditor.iterate.timeoutChain')
+      HeatmapSimulation.iterate(heatmapEditor.activeHeatmapSimulation)
+      if (shouldSetActiveEffects()) {
+        HeatmapSimulation.setActiveEffects(
+          heatmapEditor.activeHeatmapSimulation,
+          getActiveEffects(heatmapEditor)
+        )
+      }
+      if (shouldDraw()) {
+        draw(heatmapEditor)
+      }
+      // TODO: persist heatmap into store
+      iterationCount = iterationCount + 1
+      logReturn()
+    },
+    100,
+    50
   )
-
-  // persist heatmap into store
-
-  draw(heatmapEditor)
-
   logReturn()
 }
+
+const timeoutChain = (cb, timeout, count) => {
+  setTimeout(
+    () => {
+      cb()
+      if (count > 0) {
+        timeoutChain(cb, timeout, count - 1)
+      }
+    },
+    timeout
+  )
+}
+
+
 
 const getActiveEffects = (heatmapEditor) => {
   logMethod('HeatmapEditor.getActiveEffects')
