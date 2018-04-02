@@ -1,5 +1,5 @@
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
-import * as HeatmapEditor from './heatmap_editor'
+import * as HeatmapHandler from './heatmap_handler'
 import * as HeatmapStore from './heatmap_store'
 import * as vscode from 'vscode'
 import 'isomorphic-fetch'
@@ -12,7 +12,7 @@ export const create = (o = {}) => {
 		active: false,
 		extensionContext: o.extensionContext,
 		heatmapStore: null,
-		activeHeatmapEditors: Set()
+		heatmapHandlersByFilePath: Map()
 	}
 }
 
@@ -21,41 +21,77 @@ export const activate = async (heatmapFeature) => {
 	heatmapFeature.active = true
 
 	heatmapFeature.heatmapStore = HeatmapStore.create()
-	// TODO: should be activate, start a timer 
+	// TODO: should be activate / start a timer? 
 	await HeatmapStore.sync(heatmapFeature.heatmapStore)
 
+	vscode.workspace.onDidOpenTextDocument(
+		() => synchronizeHeatmapHandlers(heatmapFeature),
+		null,
+		heatmapFeature.extensionContext.subscriptions
+	)
+
+	vscode.workspace.onDidCloseTextDocument(
+		() => synchronizeHeatmapHandlers(heatmapFeature),
+		null,
+		heatmapFeature.extensionContext.subscriptions
+	)
+
 	vscode.window.onDidChangeVisibleTextEditors(
-    () => synchronizeActiveHeatmapEditors(heatmapFeature),
+    () => synchronizeHeatmapHandlers(heatmapFeature),
     null,
     heatmapFeature.extensionContext.subscriptions
   )
 
-	synchronizeActiveHeatmapEditors(heatmapFeature)
+	synchronizeHeatmapHandlers(heatmapFeature)
 }
 
 export const deactivate = (heatmapFeature) => {	
 	// TODO
 }
 
-const synchronizeActiveHeatmapEditors = (heatmapFeature) => {
-	logMethod('HeatmapFeature.synchronizeActiveHeatmapEditors')
+const synchronizeHeatmapHandlers = (heatmapFeature) => {
+	logMethod('HeatmapFeature.synchronizeHeatmapHandlers')
 
-	const newActiveHeatmapEditors =
+	const textEditorsByFilePath = Map(
 		vscode.window.visibleTextEditors.map(
-			(textEditor) => {
-				const heatmapEditor = HeatmapEditor.create({
-					textEditor: textEditor,
-					heatmapStore: heatmapFeature.heatmapStore
-				})
-				return heatmapEditor
-			}
+			textEditor => [ textEditor.document.fileName, textEditor ]
 		)
+	)
 
-	heatmapFeature.activeHeatmapEditors.map(HeatmapEditor.deactivate)
-	newActiveHeatmapEditors.map(HeatmapEditor.activate)
-	heatmapFeature.activeHeatmapEditors = newActiveHeatmapEditors
+	// We will look for HeatmapHandlers that are still managing open 
+	// TextDocuments, and we will remove any unused HeatmapHandlers.
+	let unusedHeatmapHandlersByFilePath = Map(heatmapFeature.heatmapHandlersByFilePath)
 
-	log('activeHeatmapEditors', heatmapFeature.activeHeatmapEditors)
+	const newHeatmapHandlers = 
+		// We should have one HeatmapHandler for every open TextDocument.
+		vscode.workspace.textDocuments.map(textDocument => {
+			const filePath = textDocument.fileName
+			
+			let handler =	heatmapFeature.heatmapHandlersByFilePath.get(filePath)
+			handler = handler || HeatmapHandler.create({
+				textDocument: textDocument,
+				heatmapStore: heatmapFeature.heatmapStore
+			})
+
+			// Set the TextEditor if if is available: indicates visibility.
+			const editorForHandler = textEditorsByFilePath.get(filePath)
+			HeatmapHandler.setTextEditor(handler, editorForHandler)
+
+			unusedHeatmapHandlersByFilePath = unusedHeatmapHandlersByFilePath.delete(filePath)
+
+			return handler
+		})
+	const newHeatmapHandlersByFilePath = Map(
+		newHeatmapHandlers.map(
+			HeatmapHandler => [ HeatmapHandler.filePath(heatmapHandler), heatmapHandler ]
+		)
+	)
+
+	unusedHeatmapHandlersByFilePath.valueSeq().map(HeatmapHandler.deactivate)
+	newHeatmapHandlersByFilePath.valueSeq().map(HeatmapHandler.activate)
+	heatmapFeature.heatmapHandlersByFilePath = newHeatmapHandlersByFilePath
+
+	log('heatmapHandlersByFilePath', heatmapFeature.heatmapHandlersByFilePath)
 	logReturn()
 }
 

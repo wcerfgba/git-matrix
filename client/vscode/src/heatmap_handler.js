@@ -3,13 +3,14 @@ import * as HeatmapStore from './heatmap_store'
 import * as HeatmapSimulation from '../vendor/eyeson-common/lib/heatmap_simulation'
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import { VisibleFileEffect, CursorPositionEffect } from '../vendor/eyeson-common/lib/effects'
-import { isFalsey } from '../vendor/eyeson-common/lib/utils'
+import { isFalsey, isTruthy } from '../vendor/eyeson-common/lib/utils'
 import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
 import { Range } from 'immutable'
 
 export const create = (o = {}) => {
-  logMethod('HeatmapEditor.create')
-  const heatmapEditor = {
+  logMethod('HeatmapHandler.create')
+  const heatmapHandler = {
+    textDocument: o.textDocument,
     textEditor: o.textEditor,
     heatmapStore: o.heatmapStore,
     activeHeatmapSimulation: null,
@@ -17,25 +18,24 @@ export const create = (o = {}) => {
     iterateIntervalTimeout: 5000,
   }
   logReturn('dodgy unloggable here :(')
-  return heatmapEditor
+  return heatmapHandler
 }
 
-const filePath = (heatmapEditor) => {
-  const filePath = heatmapEditor.textEditor.document.fileName
-  return filePath
+export const filePath = (heatmapHandler) => {
+  return heatmapHandler.textDocument.fileName
 }
 
-export const activate = (heatmapEditor) => {
-  logMethod('HeatmapEditor.activate')
+export const activate = (heatmapHandler) => {
+  logMethod('HeatmapHandler.activate')
   const heatmap = HeatmapStore.getLatest(
-    heatmapEditor.heatmapStore,
-    { filePath: filePath(heatmapEditor) }
+    heatmapHandler.heatmapStore,
+    { filePath: filePath(heatmapHandler) }
   )
   log('heatmap', heatmap)
   const heatmapSimulation = HeatmapSimulation.create({
     timestep: 0.1,
     heatmap: heatmap,
-    activeEffects: getActiveEffects(heatmapEditor)
+    activeEffects: getActiveEffects(heatmapHandler)
   })
   log('heatmapSimulation', heatmapSimulation)
 
@@ -45,47 +45,52 @@ export const activate = (heatmapEditor) => {
   // ... but we iterate to our own interval
   //HeatmapSimulation.activate(heatmapSimulation)
 
-  heatmapEditor.activeHeatmapSimulation = heatmapSimulation
+  heatmapHandler.activeHeatmapSimulation = heatmapSimulation
 
-  heatmapEditor.iterateIntervalID = setInterval(
-    () => iterate(heatmapEditor),
-    heatmapEditor.iterateIntervalTimeout
+  heatmapHandler.iterateIntervalID = setInterval(
+    () => iterate(heatmapHandler),
+    heatmapHandler.iterateIntervalTimeout
   )
-  iterate(heatmapEditor)
+  iterate(heatmapHandler)
 
   logReturn()
 }
 
-export const deactivate = (heatmapEditor) => {
-  logMethod('HeatmapEditor.deactivate')
-  clearInterval(heatmapEditor.iterateIntervalTimeout)
+export const deactivate = (heatmapHandler) => {
+  logMethod('HeatmapHandler.deactivate')
+  clearInterval(heatmapHandler.iterateIntervalTimeout)
   logReturn()
 }
 
-const iterate = (heatmapEditor) => {
-  logMethod('HeatmapEditor.iterate')
+const iterate = (heatmapHandler) => {
+  logMethod('HeatmapHandler.iterate')
 
   // TODO: better way to handle this?
-  if (isFalsey(heatmapEditor.activeHeatmapSimulation)) {
+  if (isFalsey(heatmapHandler.activeHeatmapSimulation)) {
     logReturn('falsey activeHeatmapSimulation')
     return
   }
 
   let iterationCount = 1
   const shouldSetActiveEffects = () => iterationCount % 2 === 0
-  const shouldDraw = () => iterationCount % 50 === 0
+  const shouldDraw = () => {
+    return (
+      isTruthy(heatmapHandler.textEditor) &&
+      iterationCount % 50 === 0
+    )
+  }
   timeoutChain(
     () => {
-      logMethod('HeatmapEditor.iterate.timeoutChain')
-      HeatmapSimulation.iterate(heatmapEditor.activeHeatmapSimulation)
+      logMethod('HeatmapHandler.iterate.timeoutChain')
+      HeatmapSimulation.iterate(heatmapHandler.activeHeatmapSimulation)
       if (shouldSetActiveEffects()) {
         HeatmapSimulation.setActiveEffects(
-          heatmapEditor.activeHeatmapSimulation,
-          getActiveEffects(heatmapEditor)
+          heatmapHandler.activeHeatmapSimulation,
+          getActiveEffects(heatmapHandler)
         )
       }
       if (shouldDraw()) {
-        draw(heatmapEditor)
+        draw(heatmapHandler)
       }
       // TODO: persist heatmap into store
       iterationCount = iterationCount + 1
@@ -109,40 +114,40 @@ const timeoutChain = (cb, timeout, count) => {
   )
 }
 
-
-
-const getActiveEffects = (heatmapEditor) => {
-  logMethod('HeatmapEditor.getActiveEffects')
-  const effects = [
-    ...heatmapEditor.textEditor._visibleRanges.map(
-      (range) => VisibleFileEffect.create({
-        filePath: filePath(heatmapEditor),
-        viewportTopLine: range.start.line,
-        viewportBottomLine: range.end.line
+const getActiveEffects = (heatmapHandler) => {
+  logMethod('HeatmapHandler.getActiveEffects')
+  let effects = []
+  if (isTruthy(heatmapHandler.textEditor)) {
+    effects = effects.concat([
+      ...heatmapHandler.textEditor._visibleRanges.map(
+        (range) => VisibleFileEffect.create({
+          filePath: filePath(heatmapHandler),
+          viewportTopLine: range.start.line,
+          viewportBottomLine: range.end.line
+        })
+      )
+    ])
+    effects = effects.concat([
+      CursorPositionEffect.create({
+        filePath: filePath(heatmapHandler),
+        cursorLine: heatmapHandler.textEditor.selection.active.line,
+        cursorColumn: heatmapHandler.textEditor.selection.active.character
       })
-    ),
-    CursorPositionEffect.create({
-      filePath: filePath(heatmapEditor),
-      cursorLine: heatmapEditor.textEditor.selection.active.line,
-      cursorColumn: heatmapEditor.textEditor.selection.active.character
-    })
-  ]
+    ])
+  }
+  // TODO: OpenFileEffect
   logReturn(effects)
   return effects
 }
 
-
-// TODO: heatmap is behaving as expected but redrawing in vscode is slow/buggy,
-// suggest decreasing frequency for drawing heatmap D:
-const draw = (heatmapEditor) => {
-  logMethod('HeatmapEditor.draw')
-  //console.log(heatmapEditor) // TODO: better fucking logging, srs
-  const heatmap = heatmapEditor.activeHeatmapSimulation.heatmap
+const draw = (heatmapHandler) => {
+  logMethod('HeatmapHandler.draw')
+  const heatmap = heatmapHandler.activeHeatmapSimulation.heatmap
   log('heatmap', heatmap)
 
   Heatmap.map(
     heatmap,
-    entry => setHeatmapEntryDecoration(heatmapEditor.textEditor, entry)
+    entry => setHeatmapEntryDecoration(heatmapHandler.textEditor, entry)
   )
 
   logReturn()
@@ -150,7 +155,6 @@ const draw = (heatmapEditor) => {
 
 
 // TODO:
-//   some tests
 //   persist state
 //   sync state to server
 //   more effects
@@ -160,7 +164,7 @@ const setHeatmapEntryDecoration = (
 	editor,
   [lineNumber, heatQuantity]	
 ) => {
-  logMethod('HeatmapEditor.setHeatmapEntryDecoration')
+  logMethod('HeatmapHandler.setHeatmapEntryDecoration')
   log('[lineNumber, heatQuantity]', [lineNumber, heatQuantity])
   const colorIndex = Math.floor(Math.min(Math.max(0, heatQuantity), 255))
   const decorationType = decorationTypes[colorIndex]
