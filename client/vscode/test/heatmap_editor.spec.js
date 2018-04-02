@@ -40,13 +40,15 @@ describe('HeatmapEditor', () => {
           time: 123
         })
       )
-      expect(HeatmapSimulation.getActiveEffects(subject.activeHeatmapSimulation)).toEqual([
+      const activeEffects = JSON.stringify(HeatmapSimulation.getActiveEffects(subject.activeHeatmapSimulation))
+      const expectedActiveEffects = JSON.stringify([
         CursorPositionEffect.create({
           filePath: 'qweqwiej',
           cursorLine: 0,
           cursorColumn: 0
         })
       ])
+      expect(activeEffects).toEqual(expectedActiveEffects)
       expect(subject.activeHeatmapSimulation.timestep).toEqual(0.1)
     })
 

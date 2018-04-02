@@ -41,7 +41,7 @@ export const setActiveEffects = (heatmapSimulation, activeEffects) => {
 }
 
 export const getActiveEffects = (heatmapSimulation) => {
-  return heatmapSimulation.activeEffects.entrySeq().toArray()
+  return heatmapSimulation.activeEffects.toSeq().toArray()
 }
 
 export const activate = (heatmapSimulation) => {

@@ -1,49 +1,46 @@
 import { default as express } from 'express'
 import { default as bodyParser } from 'body-parser'
 import * as Store from './store' 
-import * as Timeline from './timeline'
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 
-export const create = ({ logger = (...args) => {},
-                         port }) => {
-  const app = express()
-  const store = Store.create()
+export const create = (o) => {
+  const server = {
+    app: express(),
+    heatmapStore: Store.create(),
+    port: o.port || 3000
+  }
 
-  app.use(bodyParser.json())
+  server.app.use(bodyParser.json())
 
-  app.post('/effects', (req, res) => {
-    try {
-      const effects = JSON.parse(req.body)
-      // ....
-      res.status(200)
-    } catch (e) {
-      res.status(400).json({ err: e.message })
-    }
-  })
+  server.app.post('/effects', postEffects(server))
+  server.app.get('/heatmaps', getHeatmaps(server))
 
-  app.get('/heatmaps', (req, res) => {
-    logger(req)
-    // TODO: async Store request
-    // TODO: bin Timeline (it's just a set of effects bro)
-    const timeline = Timeline.create(
-      Store.query(store, {
-        and: req.params
-      })
-    )
-    logger(req, timeline)
-    const heatmap = Timeline.heatmap(timeline)
-    res.status(200).send(JSON.stringify(
-      [heatmap],
-      null,
-      2
-    ))
-  })
-
-  app.start = () => app.listen(port)
-
-  return app
+  return server
 }
 
-export const start = (server) => server.start()
+export const start = (server) => server.start(server.port)
 
 export const stop = (server) => { /* wtf express? */}
+
+export const postEffects = (server) => (req, res) => {
+  try {
+    const effects = JSON.parse(req.body)
+    // ....
+    res.status(200)
+  } catch (e) {
+    res.status(400).json({ err: e.message })
+  }
+}
+
+export const getHeatmaps = (server) => (req, res) => {
+  // TODO: async Store request
+  const heatmaps = Store.query(server.heatmapStore, {
+    and: req.params
+  })
+  // TODO: ungarbage this module, use new logging
+  res.status(200).send(JSON.stringify(
+    heatmaps,
+    null,
+    2
+  ))
+}

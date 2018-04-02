@@ -1,29 +1,26 @@
-import { Server } from '../src/server'
-import { default as fetch } from 'isomorphic-fetch'
+import * as Server from '../src/server'
 
-describe('GET /heatmap', () => {
+describe('getHeatmaps', () => {
   let server = Server.create({
     port: 3000
   })
 
-  beforeAll(() => {
-    server = Server.start(server)
-  })
+  test('200 OK', () => {
+    const req = {}
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(() => res)
+    }
 
-  afterAll(() => {
-    server = Server.stop(server)
-  })
+    Server.getHeatmaps(server)(req, res)
 
-  test('200 OK', done => {
-    fetch('http://localhost:3000/heatmap')
-      .then((res) => {
-        res
-          .text()
-          .then((body) => {
-            console.log(body)
-            expect(res.status).toEqual(200)
-            done()
-          })
-      })
+    expect(res.status.mock.calls[0][0]).toEqual(200)
+    expect(JSON.parse(res.send.mock.calls[0][0])).toEqual({
+      entries: {
+        2: 500,
+      },
+      filePath: "/home/jpreston/Sync/notes/movies.jf",
+      time: 123123123,
+    })
   })
 })

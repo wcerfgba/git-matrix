@@ -3,8 +3,9 @@ import * as HeatmapStore from './heatmap_store'
 import * as HeatmapSimulation from '../vendor/eyeson-common/lib/heatmap_simulation'
 import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import { VisibleFileEffect, CursorPositionEffect } from '../vendor/eyeson-common/lib/effects'
-import { isFalsey, range } from '../vendor/eyeson-common/lib/utils'
+import { isFalsey } from '../vendor/eyeson-common/lib/utils'
 import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
+import { Range } from 'immutable'
 
 export const create = (o = {}) => {
   logMethod('HeatmapEditor.create')
@@ -173,9 +174,9 @@ const setHeatmapEntryDecoration = (
   logReturn()
 }
 
-const decorationTypes = range(0, 256).map(i => {
+const decorationTypes = Range(0, 256).map(i => {
   return vscode.window.createTextEditorDecorationType({
     overviewRulerColor: `rgba(${i}, 0, 0, 1.0)`,
     overviewRulerLane: vscode.OverviewRulerLane.Left,
   })
-})
+}).toArray()

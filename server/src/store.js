@@ -1,18 +1,15 @@
-// TODO: dynamodb
-import * as Timeline from '../vendor/eyeson-common/lib/timeline'
+// TODO: an actual persistence layer (in git? :DDD)
+import * as Heatmap from '../vendor/eyeson-common/lib/heatmap'
 import { VisibleFileEffect, CursorPositionEffect } from '../vendor/eyeson-common/lib/effects'
 
 export const create = () => { /* todo */ }
 
 export const query = (store, query) => {
-  return Timeline.create([
-    VisibleFileEffect.create({
-      viewportTopLine: 1,
-      viewportBottomLine: 20
-    }),
-    CursorPositionEffect.create({
-      cursorLine: 2,
-      cursorColumn: 20
-    }),
-  ])
+  return Heatmap.create({
+    filePath: '/home/jpreston/Sync/notes/movies.jf',
+    time: 123123123,
+    entries: [
+      [2, 500.0]
+    ]
+  })
 }

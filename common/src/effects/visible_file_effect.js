@@ -1,13 +1,13 @@
 import * as Effect from './effect'
 import * as Heatmap from '../heatmap'
-import { Record } from 'immutable'
+import { Record, Range } from 'immutable'
 
 export const defaultAttrs = {
   ...Effect.defaultAttrs,
-  effectType: 'CursorPositionEffect',
+  effectType: 'VisibleFileEffect',
   filePath: null,
-  cursorLine: null,
-  cursorColumn: null
+  viewportTopLine: null,
+  viewportBottomLine: null
 }
 export const record = Record(defaultAttrs)
 
@@ -16,5 +16,7 @@ export const create = (o) => {
 }
 
 export const heatmap = (effect) => Heatmap.create({
-  entries: [[ effect.cursorLine, 50.0 ]]
+  entries: Range(effect.viewportTopLine,
+                  effect.viewportBottomLine + 1)
+            .map(lineNumber => [ lineNumber, 5.0 ])                           
 })
