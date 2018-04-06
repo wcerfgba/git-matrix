@@ -10,6 +10,7 @@ import { Range } from 'immutable'
 export const create = (o = {}) => {
   logMethod('HeatmapHandler.create')
   const heatmapHandler = {
+    isActive: false,
     textDocument: o.textDocument,
     textEditor: o.textEditor,
     heatmapStore: o.heatmapStore,
@@ -27,6 +28,13 @@ export const filePath = (heatmapHandler) => {
 
 export const activate = (heatmapHandler) => {
   logMethod('HeatmapHandler.activate')
+
+  if (heatmapHandler.isActive) {
+    logReturn('isActive')
+    return
+  }
+  heatmapHandler.isActive = true
+
   const heatmap = HeatmapStore.getLatest(
     heatmapHandler.heatmapStore,
     { filePath: filePath(heatmapHandler) }
@@ -58,8 +66,13 @@ export const activate = (heatmapHandler) => {
 
 export const deactivate = (heatmapHandler) => {
   logMethod('HeatmapHandler.deactivate')
+  heatmapHandler.isActive = false
   clearInterval(heatmapHandler.iterateIntervalTimeout)
   logReturn()
+}
+
+export const setTextEditor = (heatmapHandler, textEditor) => {
+  heatmapHandler.textEditor = textEditor
 }
 
 const iterate = (heatmapHandler) => {

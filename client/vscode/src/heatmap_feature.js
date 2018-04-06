@@ -3,7 +3,7 @@ import * as HeatmapHandler from './heatmap_handler'
 import * as HeatmapStore from './heatmap_store'
 import * as vscode from 'vscode'
 import 'isomorphic-fetch'
-import { Set } from 'immutable'
+import { Map } from 'immutable'
 import { assert } from '../vendor/eyeson-common/lib/utils'
 import { log, logMethod, logReturn } from '../vendor/eyeson-common/lib/logging'
 
@@ -25,32 +25,32 @@ export const activate = async (heatmapFeature) => {
 	await HeatmapStore.sync(heatmapFeature.heatmapStore)
 
 	vscode.workspace.onDidOpenTextDocument(
-		() => synchronizeHeatmapHandlers(heatmapFeature),
+		() => synchronize(heatmapFeature),
 		null,
 		heatmapFeature.extensionContext.subscriptions
 	)
 
 	vscode.workspace.onDidCloseTextDocument(
-		() => synchronizeHeatmapHandlers(heatmapFeature),
+		() => synchronize(heatmapFeature),
 		null,
 		heatmapFeature.extensionContext.subscriptions
 	)
 
 	vscode.window.onDidChangeVisibleTextEditors(
-    () => synchronizeHeatmapHandlers(heatmapFeature),
+    () => synchronize(heatmapFeature),
     null,
     heatmapFeature.extensionContext.subscriptions
   )
 
-	synchronizeHeatmapHandlers(heatmapFeature)
+	synchronize(heatmapFeature)
 }
 
 export const deactivate = (heatmapFeature) => {	
 	// TODO
 }
 
-const synchronizeHeatmapHandlers = (heatmapFeature) => {
-	logMethod('HeatmapFeature.synchronizeHeatmapHandlers')
+export const synchronize = (heatmapFeature) => {
+	logMethod('HeatmapFeature.synchronize')
 
 	const textEditorsByFilePath = Map(
 		vscode.window.visibleTextEditors.map(
@@ -83,7 +83,7 @@ const synchronizeHeatmapHandlers = (heatmapFeature) => {
 		})
 	const newHeatmapHandlersByFilePath = Map(
 		newHeatmapHandlers.map(
-			HeatmapHandler => [ HeatmapHandler.filePath(heatmapHandler), heatmapHandler ]
+			heatmapHandler => [ HeatmapHandler.filePath(heatmapHandler), heatmapHandler ]
 		)
 	)
 

@@ -1,5 +1,12 @@
 export const window = {
-  createTextEditorDecorationType: jest.fn()
+  visibleTextEditors: [],
+  createTextEditorDecorationType: jest.fn(),
+  onDidChangeVisibleTextEditors: jest.fn()
+}
+
+export const workspace = {
+  onDidOpenTextDocument: jest.fn(),
+  onDidCloseTextDocument: jest.fn()
 }
 
 export const OverviewRulerLane = {
