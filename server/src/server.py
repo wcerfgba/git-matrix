@@ -1,9 +1,16 @@
-from bottle import Bottle, run, post
+from bottle import Bottle, run, post, request
+from application import Application
+import json
 
-app = Bottle()
+server = Bottle()
+app = Application()
 
-@post('/events')
-def hello():
-    return "Hello World!"
-
-run(app, host='localhost', port=3000)
+@server.post('/events')
+def post_events():
+    req = request.json
+    result = app.post_events(**req)
+    res = json.dumps(result)
+    return res
+    
+if __name__ == '__main__':
+    run(server, host='localhost', port=3000)

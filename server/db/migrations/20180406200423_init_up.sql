@@ -1,8 +1,6 @@
 CREATE TABLE clients (
   id                uuid          PRIMARY KEY,
   shared_secret     text          NOT NULL
-  --time              timestamptz   NOT NULL
-  -- HACK: We need this for UNIQUE in TimescaleDB but it's irrelevant.
 );
 
 CREATE TABLE snapshots (
@@ -29,12 +27,38 @@ CREATE TABLE events (
   snapshot_id           uuid          NOT NULL    REFERENCES snapshots(id),
   event_type            event         NOT NULL,
 
+
   file_visible_top_line       integer,
   file_visible_bottom_line    integer,
+
+  CONSTRAINT file_visible_start
+  CHECK (event_type != 'file-visible-start' OR (
+    file_visible_top_line     IS NOT NULL AND
+    file_visible_bottom_line  IS NOT NULL
+  )),
+
 
   file_scroll_top_line        integer,
   file_scroll_bottom_line     integer,
 
-  cursor_position_line        integer
+  CONSTRAINT file_scroll_start
+  CHECK (event_type != 'file-scroll-start' OR (
+    file_scroll_top_line     IS NOT NULL AND
+    file_scroll_bottom_line  IS NOT NULL
+  )),
+
+  CONSTRAINT file_scroll_end
+  CHECK (event_type != 'file-scroll-end' OR (
+    file_scroll_top_line     IS NOT NULL AND
+    file_scroll_bottom_line  IS NOT NULL
+  )),
+
+
+  cursor_position_line        integer,
+
+  CONSTRAINT cursor_position_set
+  CHECK (event_type != 'cursor-position-set' OR (
+    cursor_position_line     IS NOT NULL
+  ))
 );
 SELECT create_hypertable('events', 'time');
