@@ -29,16 +29,18 @@ def event_column_values(columns, event):
   return extra_values
 
 class DB:
-  def __init__(self):
-    self.conn = psycopg2.connect(**env.db)
-    self.logger = logging.getLogger('db')
+  def __init__(self, **attrs):
+    self.conn = attrs.get('conn', psycopg2.connect(**env.db))
+    self.logger = attrs.get('logger', logging.getLogger('db'))
   
   def __del__(self):
     self.conn.close()
 
   def get_secret_for(self, client_id = None):
-    self.logger.info('DB.get_secret_for(%s, client_id = %s)', self, client_id)
+    print('qwe')
+    self.logger.info('get_secret_for(client_id = %s)', client_id)
     cur = self.conn.cursor()
+    print('qweqwe!')
     try:
       query = cur.mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client_id,))
       self.logger.debug('query = %s', query)
