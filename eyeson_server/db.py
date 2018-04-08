@@ -36,13 +36,11 @@ class DB:
   def __del__(self):
     self.conn.close()
 
-  def get_secret_for(self, client_id = None):
-    print('qwe')
-    self.logger.info('get_secret_for(client_id = %s)', client_id)
+  def get_client_secret(self, client = None):
+    self.logger.info('get_client_secret(client = %s)', client)
     cur = self.conn.cursor()
-    print('qweqwe!')
     try:
-      query = cur.mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client_id,))
+      query = cur.mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client,))
       self.logger.debug('query = %s', query)
       cur.execute(query)
       res = cur.fetchone()

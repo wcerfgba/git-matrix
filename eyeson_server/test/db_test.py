@@ -5,34 +5,24 @@ from hypothesis.strategies import text
 
 from db import DB 
 
-class TestDBGetSecretFor(TestCase):
-    #@given(text(), text())
-    def test_valid_user_correct_secret(self):
-        client_id = '123123'
-        expected_secret = 'asdasdas'
-        logger = MockLogger()
-        db = buildDB(logger = logger, fetchone = expected_secret)
-        secret = db.get_secret_for(client_id)
-        assert secret == expected_secret
-        assert logger.log == [
-            'get_secret_for(client_id = 123123)'
-        ]
 
-def buildDB(**kwargs):
-    logger = kwargs.pop('logger') or Mock()
-    fetch_methods = kwargs
-    conn = mockConn(**fetch_methods)
+
+
+def buildDB(**fetch_methods):
+    logger = MockLogger()
+    conn = MockConn(**fetch_methods)
     db = DB(conn = conn, logger = logger)
     return db
 
-def mockConn(**methods):
-    cursor = Mock()
-    for (method, value) in methods.items():
-        method_mock = getattr(cursor, method)
-        method_mock.return_value = (value,)
-    conn = Mock()
-    conn.cursor.return_value = cursor
-    return conn
+class MockConn:
+    def __init__(self, **methods):
+        self._cursor = MockCursor(**methods)
+    
+    def cursor(self):
+        return self._cursor
+    
+    def close(self):
+        pass
 
 class MockLogger:
     def __init__(self):
@@ -43,3 +33,43 @@ class MockLogger:
     
     def debug(self, msg, *args):
         self.log.append(msg % args)
+
+
+class MockCursor:
+    def __init__(self, **methods):
+        for (method, value) in methods.items():
+            setattr(self, method, lambda: (value,))
+
+    def close(self):
+        pass
+
+    def mogrify(self, str, *args):
+        mogrified_args = map(
+            lambda arg: psycopg2.extensions.adapt(arg).getquoted(),
+            args
+        )
+
+        mogrified_string = str % args
+
+        return mogrified_string
+
+    def execute(self, str, *args):
+        pass
+
+
+# @given(text(), text())
+# def test_get_secret(client, expected_secret):
+def test_get_secret():
+    client = 'qeqweqe'
+    expected_secret = 'werfsdfsd'
+
+    db = buildDB(fetchone = expected_secret)
+
+    secret = db.get_client_secret(client)
+    
+    assert secret == expected_secret
+    assert db.logger.log == [
+        'get_client_secret(client = %s)' % client,
+        "query = SELECT shared_secret FROM clients WHERE id = ('%s',)::uuid" % client
+    ]
+
