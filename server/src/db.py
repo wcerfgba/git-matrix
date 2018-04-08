@@ -1,13 +1,18 @@
 import psycopg2
 import psycopg2.extras
+import psycopg2.errorcodes
 import env
 from util import uuid
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+class DatabaseError(Exception):
+    def __init__(self, cause):
+      self.cause = cause
 
 def events_extra_columns(events):
   extra_columns_by_event_type = {
+    'file-open-start':      [],
+    'file-open-end':        [],
     'file-visible-start':   ['file_visible_top_line', 'file_visible_bottom_line'],
     'file-visible-end':     [],
     'file-scroll-start':    ['file_scroll_top_line', 'file_scroll_bottom_line'],
@@ -35,15 +40,20 @@ class DB:
     self.logger.info('DB.get_secret_for(%s, client_id = %s)', self, client_id)
     cur = self.conn.cursor()
     try:
-      cur.execute("SELECT shared_secret FROM clients WHERE id = %s", (client_id,))
-      secret = cur.fetchone()[0]
-      cur.close()
+      query = cur.mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client_id,))
+      self.logger.debug('query = %s', query)
+      cur.execute(query)
+      res = cur.fetchone()
+      secret = res[0]
       return secret
-    except Exception as e:
+    except psycopg2.Error as e:
       self.logger.error(e)
-      return None
+      raise DatabaseError(e)
+    finally:
+      cur.close()
 
   def post_snapshots(self, client = None, session = None, snapshots = None):
+    self.logger.info('DB.post_snapshots(%s, client = %s, session = %s)', self, client, session)
     columns = [
       'id',
       'project_name',
@@ -53,21 +63,27 @@ class DB:
       'snapshot'
     ]
     rows = list(map(lambda snapshot: (uuid(),
-                                       snapshot['project_name'],
-                                       snapshot['file_path'],
-                                       snapshot['time'],
-                                       client,
-                                       snapshot['snapshot']), snapshots))
-    try:                                       
+                                      snapshot['project_name'],
+                                      snapshot['file_path'],
+                                      snapshot['time'],
+                                      client,
+                                      snapshot['snapshot']), snapshots))
+    if len(rows) == 0:
+      return []
+
+    try:
       cur = self.conn.cursor()
       query = f"INSERT INTO snapshots ({', '.join(columns)}) VALUES %s RETURNING id"
       psycopg2.extras.execute_values(cur, query, rows)
-      ids = tuple(map(lambda r: r[0], cur.fetchall()))
-      cur.close()
+      ids = []
+      for row in cur.fetchall():
+        ids.append(row[0])
       return ids
-    except Exception as e:
+    except psycopg2.Error as e:
       self.logger.error(e)
-      return None
+      raise DatabaseError(e)
+    finally:
+      cur.close()
 
   def post_events(self, client = None, session = None, events = None):
     self.logger.info('DB.post_events(%s, client = %s, session = %s, events = %s)', self, client, session, events)
@@ -86,20 +102,20 @@ class DB:
                                    event['event_type'],
                                    *event_column_values(events_columns, event)), events))
     self.logger.debug('rows = %s', rows)
+    query_columns = ', '.join(columns + events_columns)
     try:
-      query_columns = ', '.join(columns + events_columns)
       cur = self.conn.cursor()
       query = f"INSERT INTO events ({query_columns}) VALUES %s"
       psycopg2.extras.execute_values(cur, query, rows)
-      cur.close()
       return True
-    except Exception as e:
+    except psycopg2.Error as e:
       self.logger.error(e)
-      return None
+      raise DatabaseError(e)
+    finally:
+      cur.close()
 
   def rollback(self):
     self.conn.rollback()
 
   def commit(self):
     self.conn.commit()
-  

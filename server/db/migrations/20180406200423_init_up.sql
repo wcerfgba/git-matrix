@@ -13,6 +13,8 @@ CREATE TABLE snapshots (
 );
 
 CREATE TYPE event AS ENUM (
+  'file-open-start',
+  'file-open-end',
   'file-visible-start',
   'file-visible-end',
   'file-scroll-start',
