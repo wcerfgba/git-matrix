@@ -37,23 +37,24 @@ class DB:
     self.conn.close()
 
   def get_client_secret(self, client = None):
-    self.logger.info('get_client_secret(client = %s)', client)
+    self.logger.info('get_client_secret(client = {})', client)
     cur = self.conn.cursor()
     try:
       query = cur.mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client,))
-      self.logger.debug('query = %s', query)
+      self.logger.debug('query = {}', query)
       cur.execute(query)
       res = cur.fetchone()
       secret = res[0]
       return secret
     except psycopg2.Error as e:
-      self.logger.error(e)
+      self.logger.error('except psycopg2.Error')
+      self.logger.error('e.pgerror = {}', e.pgerror)
       raise DatabaseError(e)
     finally:
       cur.close()
 
   def post_snapshots(self, client = None, session = None, snapshots = None):
-    self.logger.info('DB.post_snapshots(%s, client = %s, session = %s)', self, client, session)
+    self.logger.info('DB.post_snapshots({}, client = {}, session = {})', self, client, session)
     columns = [
       'id',
       'project_name',
@@ -86,7 +87,7 @@ class DB:
       cur.close()
 
   def post_events(self, client = None, session = None, events = None):
-    self.logger.info('DB.post_events(%s, client = %s, session = %s, events = %s)', self, client, session, events)
+    self.logger.info('DB.post_events({}, client = {}, session = {}, events = {})', self, client, session, events)
     columns = [
       'time',
       'client_id',
@@ -101,7 +102,7 @@ class DB:
                                    event['snapshot_id'],
                                    event['event_type'],
                                    *event_column_values(events_columns, event)), events))
-    self.logger.debug('rows = %s', rows)
+    self.logger.debug('rows = {}', rows)
     query_columns = ', '.join(columns + events_columns)
     try:
       cur = self.conn.cursor()

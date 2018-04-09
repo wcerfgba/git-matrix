@@ -1,75 +1,60 @@
-from unittest import TestCase
-from unittest.mock import Mock, call
-from hypothesis import given
-from hypothesis.strategies import text
-
-from db import DB 
+from support import *
+from db import DB, DatabaseError
 
 
 
-
-def buildDB(**fetch_methods):
-    logger = MockLogger()
-    conn = MockConn(**fetch_methods)
+def test__DB__del():
+    conn = Mock()
+    logger = Mock()
     db = DB(conn = conn, logger = logger)
-    return db
 
-class MockConn:
-    def __init__(self, **methods):
-        self._cursor = MockCursor(**methods)
-    
-    def cursor(self):
-        return self._cursor
-    
-    def close(self):
-        pass
+    del db
 
-class MockLogger:
-    def __init__(self):
-        self.log = []
-    
-    def info(self, msg, *args):
-        self.log.append(msg % args)
-    
-    def debug(self, msg, *args):
-        self.log.append(msg % args)
+    conn.close.assert_called()
 
 
-class MockCursor:
-    def __init__(self, **methods):
-        for (method, value) in methods.items():
-            setattr(self, method, lambda: (value,))
 
-    def close(self):
-        pass
+@given(st.text(), st.text())
+def test__get_client_secret(client, expected_secret):
+    logger = MockLogger()
+    conn = MockConn()
+    conn._cursor.fetchone = method(lambda _: (expected_secret,), conn._cursor)
+    db = DB(conn = conn, logger = logger)
 
-    def mogrify(self, str, *args):
-        mogrified_args = map(
-            lambda arg: psycopg2.extensions.adapt(arg).getquoted(),
-            args
-        )
-
-        mogrified_string = str % args
-
-        return mogrified_string
-
-    def execute(self, str, *args):
-        pass
-
-
-# @given(text(), text())
-# def test_get_secret(client, expected_secret):
-def test_get_secret():
-    client = 'qeqweqe'
-    expected_secret = 'werfsdfsd'
-
-    db = buildDB(fetchone = expected_secret)
+    expected_query = conn.cursor().mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client,))
 
     secret = db.get_client_secret(client)
     
     assert secret == expected_secret
     assert db.logger.log == [
-        'get_client_secret(client = %s)' % client,
-        "query = SELECT shared_secret FROM clients WHERE id = ('%s',)::uuid" % client
+        'get_client_secret(client = {})'.format(client),
+        "query = {}".format(expected_query)
     ]
 
+@given(st.text(), st.text())
+def test__get_client_secret__psycopg2_error(client, error):
+    error = psycopg2.Error()
+    error.__setstate__({'pgerror': error})
+
+    logger = MockLogger()
+    conn = MockConn()
+    conn._cursor.fetchone = method(lambda _: throw(error), conn._cursor)
+    db = DB(conn = conn, logger = logger)
+
+    expected_query = conn.cursor().mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client,))
+
+    with raises(DatabaseError):
+        db.get_client_secret(client)
+    
+    assert db.logger.log == [
+        "get_client_secret(client = {})".format(client),
+        "query = {}".format(expected_query),
+        "except psycopg2.Error",
+        "e.pgerror = {}".format(error)
+    ]
+
+
+
+@given(st.text(), st.text())
+def test__post_snapshots(client, session):
+    # TODO: parameterize snapshots
