@@ -1,6 +1,11 @@
 # 2018-08-26
 
-
+todo:
+render to html table
+sort by filename
+add colouring to table
+tests
+group files and users
 
 
 
