@@ -58,23 +58,8 @@ class ChangesObjectStream extends Transform
         @lastCommit = object
       objects
     , []
-    @push commitObjects
+    commitObjects.forEach (co) => @push co
 
-
-parseChanges = (raw) =>
-  commits = compact raw.split '\n\n\n'
-    .map trim
-  commitObjects = commits.reduce (objects, commit) =>
-    lines = compact commit.split '\n'
-    object = matchCommit lines.shift()
-    object.files = [
-      ...(object.files || [])
-      ...(compact lines)
-    ]
-    objects.push object
-    objects
-  , []
-  commitObjects
 
 
 class UserFileCommitCountMatrix
@@ -105,6 +90,7 @@ class UserFileCommitCountMatrix
     @emails = []
   
   addCommit: (commit) =>
+    # debug commit
     @emails = union @emails, [commit.email]
     @files = union @files, commit.files
     @reshapeMatrix()
@@ -130,33 +116,21 @@ class UserFileCommitCountMatrix
 
 
 main = () =>
-  # changesProc = spawn 'git', ['--no-pager', 'log', '--format=%n%n%ct %ae', '--name-only', '--no-merges']
-  # changesRawStream = changesProc.stdout
-  changesRaw = readFileSync 'changes'
-  changesRaw = changesRaw.toString 'utf8'
+  changesProc =
+    spawn 'git',
+      ['--no-pager', 'log', '--format=%n%n%ct %ae', '--name-only', '--no-merges'],
+      { env: { ...process.env, GIT_FLUSH: 0 } }
+  changesRawStream = changesProc.stdout
+  changesObjectStream = new ChangesObjectStream
+  changesRawStream.pipe changesObjectStream
   matrix = new UserFileCommitCountMatrix
-  # changesRawStream.on 'data', (chunk) => changesRaw += chunk.toString('utf8')
-  # changesProc.on 'close', () =>
-  changes = parseChanges changesRaw
-  changes.forEach matrix.addCommit
-  debug ...matrix.matrix
+  end = new Promise (resolve, reject) =>
+    changesObjectStream.on 'data', matrix.addCommit
+    changesProc.on 'exit', () =>
+      debug matrix
+      resolve matrix
+
+  await end
 
 
-  # await finishedAsync changesRawStream
-  # changesObjectStream = new ChangesObjectStream
-  # matrix = new UserFileCommitCountMatrix
-  # changesObjectStream.on 'data', (changes) =>
-  #   changes = flatten changes
-  #   # return if !changes
-  #   changes.forEach matrix.addCommit
-  #   # debug matrix
-
-  # changesRawStream.on 'data', (chunk) => changesObjectStream.write(chunk)
-
-  # await pipeline changesRawStream, changesObjectStream
-  
-  # await finishedAsync changesRawStream
-
-  # debug matrix
 main()
-# (() => await main())()
