@@ -8,8 +8,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "build": "coffee -cMb --no-header . && flow",
+    "watch": "chokidar *.coffee -c 'npm run build'"
   },
-  "author": "",
-  "license": "ISC"
+  "author": ""
 }
