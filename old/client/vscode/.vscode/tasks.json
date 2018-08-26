@@ -4,9 +4,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "watch",
+      "label": "build",
       "type": "shell",
-      "command": "./go && yarn watch &"
+      "command": "yarn build"
     }
   ]
 }

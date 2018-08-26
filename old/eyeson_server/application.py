@@ -1,4 +1,4 @@
-from db import DB
+from db import DB, DatabaseError
 from auth import Auth
 from util import error
 import logging
@@ -29,10 +29,10 @@ class Application:
       posted_snapshots = self.db.post_snapshots(client = auth['id'],
                                                 session = session,
                                                 snapshots = snapshots)
-      events = list(map(lambda event: {
+      events = [ {
         **event, 
         'snapshot_id': posted_snapshots[event['snapshot']]
-      }, events))
+      } for event in events ]
 
       posted_events = self.db.post_events(client = auth['id'],
                                           session = session,
@@ -44,7 +44,7 @@ class Application:
       }
     except DatabaseError as e:
       self.db.rollback()
-      self.logger.info('Failed to save snapshots.')
+      self.logger.error(e)
       return {
-        'err': 'Failed to save snapshots.'
+        'err': e
       }

@@ -14,7 +14,7 @@ def test__DB__del():
 
 
 
-@given(st.text(), st.text())
+@given(st.uuids(), st.text())
 def test__get_client_secret(client, expected_secret):
     logger = MockLogger()
     conn = MockConn()
@@ -27,11 +27,11 @@ def test__get_client_secret(client, expected_secret):
     
     assert secret == expected_secret
     assert db.logger.log == [
-        'get_client_secret(client = {})'.format(client),
+        "get_client_secret(client = {})".format(client),
         "query = {}".format(expected_query)
     ]
 
-@given(st.text(), st.text())
+@given(st.uuids(), st.text())
 def test__get_client_secret__psycopg2_error(client, error):
     error = psycopg2.Error()
     error.__setstate__({'pgerror': error})
@@ -55,6 +55,30 @@ def test__get_client_secret__psycopg2_error(client, error):
 
 
 
-@given(st.text(), st.text())
-def test__post_snapshots(client, session):
-    # TODO: parameterize snapshots
+@given(st.uuids(), st.uuids(), snapshots())
+def test__post_snapshots(client, session, snapshots):
+    logger = MockLogger()
+    conn = MockConn()
+    #conn._cursor.fetchone = method(lambda _: (expected_secret,), conn._cursor)
+    db = DB(conn = conn, logger = logger)
+
+    expected_query = conn.cursor().mogrify("SELECT shared_secret FROM clients WHERE id = %s::uuid", (client,))
+
+    secret = db.get_client_secret(client)
+    
+    assert secret == expected_secret
+    assert db.logger.log == [
+        "get_client_secret(client = {})".format(client),
+        "query = {}".format(expected_query)
+    ]
+
+
+
+def snapshots():
+    return st.lists(st.fixed_dictionaries({
+        "project_name": st.text(),
+        "file_path": st.text(),
+        "time": st.datetimes().map(lambda datetime: datetime.isoformat()),
+        "snapshot": st.text()
+    }))
+    

@@ -35,7 +35,9 @@
 	},
 	"dependencies": {
 		"babel-polyfill": "^6.26.0",
+		"immutable": "^3.8.2",
 		"isomorphic-fetch": "^2.2.1",
-		"log4js": "^2.5.3"
+		"lokijs": "^1.5.3",
+		"nodegit": "^0.21.2"
 	}
 }
