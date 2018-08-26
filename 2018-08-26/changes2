@@ -1,0 +1,1005 @@
+
+
+1535292423 wcerfgba@riseup.net
+
+11	0	2018-08-26/.flowconfig
+53	40	2018-08-26/index.coffee
+188	0	2018-08-26/index.js
+31	0	2018-08-26/package-lock.json
+4	3	2018-08-26/package.json
+
+
+1535282422 wcerfgba@riseup.net
+
+1	1	2018-08-26/git-file-changes
+16	42	2018-08-26/index.coffee
+
+
+1535252881 wcerfgba@riseup.net
+
+14718	0	2018-08-26/changes
+111	15	2018-08-26/index.coffee
+
+
+1535244328 wcerfgba@riseup.net
+
+1	0	2018-08-26/.gitignore
+1	0	2018-08-26/git-file-changes
+66	0	2018-08-26/index.coffee
+13	0	2018-08-26/package-lock.json
+15	0	2018-08-26/package.json
+0	9	client/vscode/.babelrc
+0	2	client/vscode/.gitignore
+0	7	client/vscode/.vscodeignore
+0	41	client/vscode/package.json
+0	208	client/vscode/src/extension.js
+0	5767	client/vscode/yarn.lock
+0	3	eyeson_server/.gitignore
+0	0	eyeson_server/README.md
+0	0	eyeson_server/__init__.py
+0	25	eyeson_server/__main__.py
+0	50	eyeson_server/application.py
+0	13	eyeson_server/auth.py
+0	122	eyeson_server/db.py
+0	7	eyeson_server/db/migrations/20180406200423_init_down.sql
+0	66	eyeson_server/db/migrations/20180406200423_init_up.sql
+0	9	eyeson_server/dev/create_docker_dev_db.sh
+0	6	eyeson_server/env.py
+0	3	eyeson_server/requirements.txt
+0	60	eyeson_server/test/db_test.py
+0	29	eyeson_server/test/fixtures/post_events_1.json
+0	7	eyeson_server/test/request_fixture_1.sh
+0	65	eyeson_server/test/support.py
+0	10	eyeson_server/util.py
+9	0	notes.eyeson.md
+2	0	old/client/vscode/.gitignore
+1	1	old/client/vscode/.vscode/launch.json
+2	2	old/client/vscode/.vscode/tasks.json
+0	28	old/client/vscode/TODO.jf
+0	14	old/client/vscode/__mocks__/vscode.js
+0	18	old/client/vscode/go
+1	3	old/client/vscode/package.json
+202	12	old/client/vscode/src/extension.js
+0	97	old/client/vscode/src/heatmap_feature.js
+0	199	old/client/vscode/src/heatmap_handler.js
+0	47	old/client/vscode/src/heatmap_store.js
+0	23	old/client/vscode/src/network_handler.js
+0	43	old/client/vscode/src/store.js
+0	85	old/client/vscode/test/heatmap_feature.spec.js
+0	134	old/client/vscode/test/heatmap_handler.spec.js
+0	1	old/client/vscode/vendor/eyeson-common
+1004	529	old/client/vscode/yarn.lock
+0	9	old/common/.babelrc
+0	7	old/common/TODO.jf
+0	24	old/common/package.json
+0	20	old/common/src/effects/cursor_position_effect.js
+0	29	old/common/src/effects/effect.js
+0	8	old/common/src/effects/index.js
+0	22	old/common/src/effects/visible_file_effect.js
+0	11	old/common/src/event_listener.js
+0	21	old/common/src/events.js
+0	7	old/common/src/file.js
+0	8	old/common/src/file_line.js
+0	9	old/common/src/file_range.js
+0	99	old/common/src/heatmap.js
+0	90	old/common/src/heatmap_simulation.js
+0	33	old/common/src/logging.js
+0	34	old/common/src/utils.js
+0	68	old/common/test/heatmap_simulation.spec.js
+0	4366	old/common/yarn.lock
+3	0	old/eyeson_server/.gitignore
+0	0	old/eyeson_server/README.md
+0	0	old/eyeson_server/__init__.py
+25	0	old/eyeson_server/__main__.py
+50	0	old/eyeson_server/application.py
+13	0	old/eyeson_server/auth.py
+122	0	old/eyeson_server/db.py
+7	0	old/eyeson_server/db/migrations/20180406200423_init_down.sql
+66	0	old/eyeson_server/db/migrations/20180406200423_init_up.sql
+9	0	old/eyeson_server/dev/create_docker_dev_db.sh
+6	0	old/eyeson_server/env.py
+3	0	old/eyeson_server/requirements.txt
+84	0	old/eyeson_server/test/db_test.py
+29	0	old/eyeson_server/test/fixtures/post_events_1.json
+7	0	old/eyeson_server/test/request_fixture_1.sh
+65	0	old/eyeson_server/test/support.py
+10	0	old/eyeson_server/util.py
+0	7	old/go
+9	0	old/old/client/vscode/.babelrc
+7	0	old/old/client/vscode/.vscodeignore
+28	0	old/old/client/vscode/TODO.jf
+14	0	old/old/client/vscode/__mocks__/vscode.js
+18	0	old/old/client/vscode/go
+43	0	old/old/client/vscode/package.json
+18	0	old/old/client/vscode/src/extension.js
+97	0	old/old/client/vscode/src/heatmap_feature.js
+199	0	old/old/client/vscode/src/heatmap_handler.js
+47	0	old/old/client/vscode/src/heatmap_store.js
+23	0	old/old/client/vscode/src/network_handler.js
+43	0	old/old/client/vscode/src/store.js
+85	0	old/old/client/vscode/test/heatmap_feature.spec.js
+134	0	old/old/client/vscode/test/heatmap_handler.spec.js
+5292	0	old/old/client/vscode/yarn.lock
+9	0	old/old/common/.babelrc
+7	0	old/old/common/TODO.jf
+24	0	old/old/common/package.json
+20	0	old/old/common/src/effects/cursor_position_effect.js
+29	0	old/old/common/src/effects/effect.js
+8	0	old/old/common/src/effects/index.js
+22	0	old/old/common/src/effects/visible_file_effect.js
+11	0	old/old/common/src/event_listener.js
+21	0	old/old/common/src/events.js
+7	0	old/old/common/src/file.js
+8	0	old/old/common/src/file_line.js
+9	0	old/old/common/src/file_range.js
+99	0	old/old/common/src/heatmap.js
+90	0	old/old/common/src/heatmap_simulation.js
+33	0	old/old/common/src/logging.js
+34	0	old/old/common/src/utils.js
+68	0	old/old/common/test/heatmap_simulation.spec.js
+4366	0	old/old/common/yarn.lock
+7	0	old/old/go
+9	0	old/old/server/.babelrc
+11	0	old/old/server/TODO.jf
+14	0	old/old/server/go
+30	0	old/old/server/package.json
+10	0	old/old/server/src/index.js
+46	0	old/old/server/src/server.js
+15	0	old/old/server/src/store.js
+26	0	old/old/server/test/heatmap.request.spec.js
+5316	0	old/old/server/yarn.lock
+0	9	old/server/.babelrc
+0	11	old/server/TODO.jf
+0	14	old/server/go
+0	30	old/server/package.json
+0	10	old/server/src/index.js
+0	46	old/server/src/server.js
+0	15	old/server/src/store.js
+0	26	old/server/test/heatmap.request.spec.js
+0	1	old/server/vendor/eyeson-common
+0	5316	old/server/yarn.lock
+
+
+1523307520 wcerfgba@riseup.net
+
+7	6	eyeson_server/db.py
+41	56	eyeson_server/test/db_test.py
+65	0	eyeson_server/test/support.py
+
+
+1523216810 wcerfgba@riseup.net
+
+3	5	eyeson_server/db.py
+56	26	eyeson_server/test/db_test.py
+
+
+1523202470 wcerfgba@riseup.net
+
+3	0	eyeson_server/.gitignore
+0	0	eyeson_server/README.md
+0	0	eyeson_server/__init__.py
+25	0	eyeson_server/__main__.py
+50	0	eyeson_server/application.py
+13	0	eyeson_server/auth.py
+123	0	eyeson_server/db.py
+7	0	eyeson_server/db/migrations/20180406200423_init_down.sql
+66	0	eyeson_server/db/migrations/20180406200423_init_up.sql
+9	0	eyeson_server/dev/create_docker_dev_db.sh
+6	0	eyeson_server/env.py
+3	0	eyeson_server/requirements.txt
+45	0	eyeson_server/test/db_test.py
+29	0	eyeson_server/test/fixtures/post_events_1.json
+7	0	eyeson_server/test/request_fixture_1.sh
+10	0	eyeson_server/util.py
+0	1	server/.gitignore
+0	0	server/README.md
+0	7	server/db/migrations/20180406200423_init_down.sql
+0	66	server/db/migrations/20180406200423_init_up.sql
+0	9	server/dev/create_docker_dev_db.sh
+0	3	server/requirements.txt
+-	-	server/src/__pycache__/application.cpython-36.pyc
+-	-	server/src/__pycache__/auth.cpython-36.pyc
+-	-	server/src/__pycache__/db.cpython-36.pyc
+-	-	server/src/__pycache__/env.cpython-36.pyc
+-	-	server/src/__pycache__/util.cpython-36.pyc
+0	50	server/src/application.py
+0	13	server/src/auth.py
+0	121	server/src/db.py
+0	6	server/src/env.py
+0	25	server/src/server.py
+0	10	server/src/util.py
+0	29	server/test/fixtures/post_events_1.json
+0	7	server/test/request_fixture_1.sh
+
+
+1523196196 wcerfgba@riseup.net
+
+1	6	.gitignore
+9	0	client/vscode/.babelrc
+2	0	client/vscode/.gitignore
+7	0	client/vscode/.vscodeignore
+41	0	client/vscode/package.json
+208	0	client/vscode/src/extension.js
+5767	0	client/vscode/yarn.lock
+3	0	old/.gitignore
+1	0	server/.gitignore
+2	0	server/db/migrations/20180406200423_init_up.sql
+27	25	server/src/application.py
+37	21	server/src/db.py
+14	5	server/src/server.py
+
+
+1523140244 wcerfgba@riseup.net
+
+27	3	server/db/migrations/20180406200423_init_up.sql
+2	2	server/dev/create_docker_dev_db.sh
+3	2	server/requirements.txt
+-	-	server/src/__pycache__/application.cpython-36.pyc
+-	-	server/src/__pycache__/auth.cpython-36.pyc
+-	-	server/src/__pycache__/db.cpython-36.pyc
+-	-	server/src/__pycache__/env.cpython-36.pyc
+-	-	server/src/__pycache__/util.cpython-36.pyc
+48	0	server/src/application.py
+13	0	server/src/auth.py
+105	0	server/src/db.py
+6	0	server/src/env.py
+14	7	server/src/server.py
+0	0	server/src/target.py
+10	0	server/src/util.py
+29	0	server/test/fixtures/post_events_1.json
+7	0	server/test/request_fixture_1.sh
+
+
+1523106828 wcerfgba@riseup.net
+
+3	0	.vscode/settings.json
+0	9	client/vscode/.babelrc
+0	16	client/vscode/.vscode/launch.json
+0	12	client/vscode/.vscode/tasks.json
+0	7	client/vscode/.vscodeignore
+0	28	client/vscode/TODO.jf
+0	14	client/vscode/__mocks__/vscode.js
+0	18	client/vscode/go
+0	43	client/vscode/package.json
+0	18	client/vscode/src/extension.js
+0	97	client/vscode/src/heatmap_feature.js
+0	199	client/vscode/src/heatmap_handler.js
+0	47	client/vscode/src/heatmap_store.js
+0	23	client/vscode/src/network_handler.js
+0	43	client/vscode/src/store.js
+0	85	client/vscode/test/heatmap_feature.spec.js
+0	134	client/vscode/test/heatmap_handler.spec.js
+0	1	client/vscode/vendor/eyeson-common
+0	5292	client/vscode/yarn.lock
+0	9	common/.babelrc
+0	7	common/TODO.jf
+0	24	common/package.json
+0	20	common/src/effects/cursor_position_effect.js
+0	29	common/src/effects/effect.js
+0	8	common/src/effects/index.js
+0	22	common/src/effects/visible_file_effect.js
+0	11	common/src/event_listener.js
+0	21	common/src/events.js
+0	7	common/src/file.js
+0	8	common/src/file_line.js
+0	9	common/src/file_range.js
+0	99	common/src/heatmap.js
+0	90	common/src/heatmap_simulation.js
+0	33	common/src/logging.js
+0	34	common/src/utils.js
+0	68	common/test/heatmap_simulation.spec.js
+0	4366	common/yarn.lock
+0	7	go
+9	0	old/client/vscode/.babelrc
+16	0	old/client/vscode/.vscode/launch.json
+12	0	old/client/vscode/.vscode/tasks.json
+7	0	old/client/vscode/.vscodeignore
+28	0	old/client/vscode/TODO.jf
+14	0	old/client/vscode/__mocks__/vscode.js
+18	0	old/client/vscode/go
+43	0	old/client/vscode/package.json
+18	0	old/client/vscode/src/extension.js
+97	0	old/client/vscode/src/heatmap_feature.js
+199	0	old/client/vscode/src/heatmap_handler.js
+47	0	old/client/vscode/src/heatmap_store.js
+23	0	old/client/vscode/src/network_handler.js
+43	0	old/client/vscode/src/store.js
+85	0	old/client/vscode/test/heatmap_feature.spec.js
+134	0	old/client/vscode/test/heatmap_handler.spec.js
+1	0	old/client/vscode/vendor/eyeson-common
+5292	0	old/client/vscode/yarn.lock
+9	0	old/common/.babelrc
+7	0	old/common/TODO.jf
+24	0	old/common/package.json
+20	0	old/common/src/effects/cursor_position_effect.js
+29	0	old/common/src/effects/effect.js
+8	0	old/common/src/effects/index.js
+22	0	old/common/src/effects/visible_file_effect.js
+11	0	old/common/src/event_listener.js
+21	0	old/common/src/events.js
+7	0	old/common/src/file.js
+8	0	old/common/src/file_line.js
+9	0	old/common/src/file_range.js
+99	0	old/common/src/heatmap.js
+90	0	old/common/src/heatmap_simulation.js
+33	0	old/common/src/logging.js
+34	0	old/common/src/utils.js
+68	0	old/common/test/heatmap_simulation.spec.js
+4366	0	old/common/yarn.lock
+7	0	old/go
+9	0	old/server/.babelrc
+11	0	old/server/TODO.jf
+14	0	old/server/go
+30	0	old/server/package.json
+10	0	old/server/src/index.js
+46	0	old/server/src/server.js
+15	0	old/server/src/store.js
+26	0	old/server/test/heatmap.request.spec.js
+1	0	old/server/vendor/eyeson-common
+5316	0	old/server/yarn.lock
+0	9	server/.babelrc
+0	0	server/README.md
+0	11	server/TODO.jf
+7	0	server/db/migrations/20180406200423_init_down.sql
+40	0	server/db/migrations/20180406200423_init_up.sql
+9	0	server/dev/create_docker_dev_db.sh
+0	14	server/go
+0	30	server/package.json
+2	0	server/requirements.txt
+0	10	server/src/index.js
+0	46	server/src/server.js
+9	0	server/src/server.py
+0	15	server/src/store.js
+0	0	server/src/target.py
+0	26	server/test/heatmap.request.spec.js
+0	1	server/vendor/eyeson-common
+0	5316	server/yarn.lock
+
+
+1523039037 wcerfgba@riseup.net
+
+8	1	client/vscode/__mocks__/vscode.js
+8	8	client/vscode/src/heatmap_feature.js
+13	0	client/vscode/src/heatmap_handler.js
+76	8	client/vscode/test/heatmap_feature.spec.js
+
+
+1522686433 wcerfgba@riseup.net
+
+0	182	client/vscode/src/heatmap_editor.js
+55	19	client/vscode/src/heatmap_feature.js
+186	0	client/vscode/src/heatmap_handler.js
+0	98	client/vscode/test/heatmap_editor.spec.js
+17	0	client/vscode/test/heatmap_feature.spec.js
+134	0	client/vscode/test/heatmap_handler.spec.js
+
+
+1522676054 wcerfgba@riseup.net
+
+4	3	client/vscode/src/heatmap_editor.js
+3	1	client/vscode/test/heatmap_editor.spec.js
+0	23	common/lib/file_line.js
+0	147	common/lib/heatmap.js
+3	2	common/src/effects/cursor_position_effect.js
+29	0	common/src/effects/effect.js
+6	69	common/src/effects/index.js
+22	0	common/src/effects/visible_file_effect.js
+1	1	common/src/heatmap_simulation.js
+0	55	server/lib/effects.js
+0	28	server/lib/heatmap.js
+0	71	server/lib/server.js
+0	31	server/lib/store.js
+0	48	server/lib/timeline.js
+0	36	server/lib/utils.js
+35	38	server/src/server.js
+9	12	server/src/store.js
+0	26	server/src/timeline.js
+17	20	server/test/heatmap.request.spec.js
+
+
+1522672030 wcerfgba@riseup.net
+
+45	10	client/vscode/src/heatmap_editor.js
+68	14	client/vscode/test/heatmap_editor.spec.js
+0	78	common/src/effects.js
+19	0	common/src/effects/cursor_position_effect.js
+71	0	common/src/effects/index.js
+5	1	common/src/heatmap_simulation.js
+
+
+1522623614 wcerfgba@riseup.net
+
+7	0	client/vscode/__mocks__/vscode.js
+6	2	client/vscode/package.json
+5	6	client/vscode/src/heatmap_editor.js
+42	0	client/vscode/test/heatmap_editor.spec.js
+1447	46	client/vscode/yarn.lock
+1	6	common/lib/heatmap.js
+1	2	common/src/heatmap.js
+1	2	common/src/heatmap_simulation.js
+1	3	common/test/heatmap_simulation.spec.js
+
+
+1522619961 wcerfgba@riseup.net
+
+4	13	go
+
+
+1522618126 wcerfgba@riseup.net
+
+32	7	common/lib/heatmap.js
+6	2	common/package.json
+20	2	common/src/heatmap.js
+12	2	common/src/heatmap_simulation.js
+4	3	common/src/logging.js
+70	0	common/test/heatmap_simulation.spec.js
+1641	41	common/yarn.lock
+
+
+1522611081 wcerfgba@riseup.net
+
+0	169	client/vscode/src/editor_effects_handler.wtf.js
+7	0	client/vscode/src/extension.js
+27	14	client/vscode/src/heatmap_editor.js
+7	14	client/vscode/src/heatmap_feature.js
+10	4	client/vscode/src/heatmap_store.js
+0	99	client/vscode/src/heatmap_ui_handler.wtf.js
+5	1	client/vscode/src/network_handler.js
+16	3	client/vscode/src/store.js
+11	5	common/src/heatmap_simulation.js
+32	0	common/src/logging.js
+2	4	common/src/utils.js
+
+
+1522603142 wcerfgba@riseup.net
+
+1	1	client/vscode/src/heatmap_editor.js
+2	2	common/src/effects.js
+1	1	common/src/heatmap_simulation.js
+
+
+1522600997 wcerfgba@riseup.net
+
+61	24	client/vscode/src/heatmap_editor.js
+7	3	client/vscode/src/heatmap_feature.js
+10	5	client/vscode/src/heatmap_store.js
+0	1	client/vscode/src/store.js
+25	7	common/lib/heatmap.js
+2	2	common/src/effects.js
+18	6	common/src/heatmap.js
+21	17	common/src/heatmap_simulation.js
+2	0	go
+1	1	server/lib/store.js
+1	1	server/src/store.js
+
+
+1522587725 wcerfgba@riseup.net
+
+1	1	client/vscode/.vscode/launch.json
+2	2	client/vscode/.vscode/tasks.json
+4	2	client/vscode/package.json
+169	0	client/vscode/src/editor_effects_handler.wtf.js
+0	23	client/vscode/src/editor_handler.js
+0	94	client/vscode/src/effects_handler.js
+97	0	client/vscode/src/heatmap_editor.js
+39	15	client/vscode/src/heatmap_feature.js
+0	100	client/vscode/src/heatmap_ui_handler.js
+99	0	client/vscode/src/heatmap_ui_handler.wtf.js
+1030	53	client/vscode/yarn.lock
+10	75	common/lib/file_line.js
+4	2	common/package.json
+2	2	common/src/effects.js
+7	0	common/src/file.js
+8	33	common/src/file_line.js
+9	0	common/src/file_range.js
+11	1	common/src/heatmap_simulation.js
+2766	0	common/yarn.lock
+14	0	go
+2	0	server/package.json
+362	9	server/yarn.lock
+
+
+1522354733 wcerfgba@riseup.net
+
+1	1	.gitignore
+3	1	client/vscode/package.json
+2	2	client/vscode/src/editor_handler.js
+8	2	client/vscode/src/effects_handler.js
+0	5	client/vscode/src/events_handler.js
+4	2	client/vscode/src/extension.js
+9	18	client/vscode/src/heatmap_feature.js
+36	0	client/vscode/src/heatmap_store.js
+54	28	client/vscode/src/heatmap_ui_handler.js
+19	0	client/vscode/src/network_handler.js
+17	5	client/vscode/src/store.js
+0	3843	client/vscode/yarn-error.log
+28	1	client/vscode/yarn.lock
+17	20	common/lib/file_line.js
+42	20	common/lib/heatmap.js
+1	1	common/src/effects.js
+1	1	common/src/event_listener.js
+1	1	common/src/file_line.js
+10	7	common/src/heatmap.js
+5	1	common/src/heatmap_simulation.js
+0	7	common/src/timeline.js
+12	1	common/src/utils.js
+6	9	server/lib/server.js
+0	10	server/lib/store.js
+30	2	server/lib/timeline.js
+5	7	server/src/server.js
+0	10	server/src/store.js
+22	4	server/src/timeline.js
+0	5027	server/yarn-error.log
+
+
+1521987424 wcerfgba@riseup.net
+
+34	15	client/vscode/src/heatmap_ui_handler.js
+7	3	client/vscode/src/store.js
+8	13	common/src/effects.js
+1	11	common/src/file_line.js
+46	22	common/src/heatmap.js
+0	45	common/src/heatmap_handler.js
+53	0	common/src/heatmap_simulation.js
+10	0	common/src/utils.js
+
+
+1521921181 wcerfgba@riseup.net
+
+5	0	client/vscode/TODO.jf
+5	1	client/vscode/src/editor_handler.js
+45	20	client/vscode/src/effects_handler.js
+1	1	client/vscode/src/heatmap_feature.js
+0	48	client/vscode/src/heatmap_handler.js
+24	19	client/vscode/src/heatmap_ui_handler.js
+15	0	client/vscode/src/store.js
+5	2	common/src/effects.js
+45	0	common/src/heatmap_handler.js
+
+
+1521901611 wcerfgba@riseup.net
+
+2	2	client/vscode/src/heatmap_ui_handler.js
+
+
+1521850246 wcerfgba@riseup.net
+
+1	1	client/vscode/.vscode/tasks.json
+1	1	client/vscode/package.json
+6	2	client/vscode/src/editor_handler.js
+2	1	client/vscode/src/effects_handler.js
+4	2	client/vscode/src/extension.js
+7	1	client/vscode/src/heatmap_feature.js
+7	3	client/vscode/src/heatmap_handler.js
+13	5	client/vscode/src/heatmap_ui_handler.js
+19	904	client/vscode/yarn.lock
+8	3	common/lib/heatmap.js
+2	2	common/src/effects.js
+5	1	common/src/heatmap.js
+
+
+1521847754 wcerfgba@riseup.net
+
+1	1	common/src/effects.js
+0	2	server/lib/server.js
+
+
+1521847670 wcerfgba@riseup.net
+
+0	1	client/vscode/src/extension.js
+2	2	client/vscode/src/heatmap_feature.js
+0	5	client/vscode/src/utils.js
+1	1	common/src/effects.js
+0	1	server/src/server.js
+1	2	server/test/heatmap.request.spec.js
+
+
+1521847443 wcerfgba@riseup.net
+
+3	1	.gitignore
+0	2	client/vscode/.gitignore
+23	0	client/vscode/TODO.jf
+18	0	client/vscode/go
+15	0	client/vscode/src/editor_handler.js
+62	0	client/vscode/src/effects_handler.js
+5	0	client/vscode/src/events_handler.js
+3	46	client/vscode/src/extension.js
+0	30	client/vscode/src/heatmap.js
+43	0	client/vscode/src/heatmap_feature.js
+44	0	client/vscode/src/heatmap_handler.js
+42	0	client/vscode/src/heatmap_ui_handler.js
+1	0	client/vscode/vendor/eyeson-common
+7	0	common/TODO.jf
+19	2	common/lib/heatmap.js
+30	3	common/src/effects.js
+11	0	common/src/event_listener.js
+21	0	common/src/events.js
+18	2	common/src/heatmap.js
+15	0	common/src/utils.js
+11	0	server/TODO.jf
+0	3	server/doc/TODO.jf
+2	1	server/lib/server.js
+3	5	server/lib/timeline.js
+0	30	server/src/effects.js
+0	16	server/src/heatmap.js
+2	1	server/src/server.js
+3	4	server/src/timeline.js
+0	15	server/src/utils.js
+
+
+1521668234 wcerfgba@riseup.net
+
+9	0	client/vscode/.babelrc
+1	1	client/vscode/.vscode/launch.json
+10	18	client/vscode/.vscode/tasks.json
+0	2658	client/vscode/package-lock.json
+14	7	client/vscode/package.json
+51	0	client/vscode/src/extension.js
+0	40	client/vscode/src/extension.ts
+30	0	client/vscode/src/heatmap.js
+0	29	client/vscode/src/heatmap.ts
+5	0	client/vscode/src/utils.js
+0	15	client/vscode/tsconfig.json
+3843	0	client/vscode/yarn-error.log
+3772	0	client/vscode/yarn.lock
+82	18	common/lib/file_line.js
+47	19	common/lib/heatmap.js
+5	5	common/src/effects.js
+39	20	common/src/file_line.js
+21	11	common/src/heatmap.js
+5	7	common/src/timeline.js
+2	6	server/doc/TODO.jf
+1	1	server/go
+5	5	server/lib/effects.js
+10	9	server/lib/heatmap.js
+60	26	server/lib/server.js
+30	26	server/lib/store.js
+9	8	server/lib/timeline.js
+4	3	server/package.json
+7	7	server/src/effects.js
+13	13	server/src/heatmap.js
+10	0	server/src/index.js
+46	39	server/src/server.js
+25	26	server/src/store.js
+6	8	server/src/timeline.js
+1	1	server/test/heatmap.request.spec.js
+6	5	server/yarn-error.log
+
+
+1521579597 wcerfgba@riseup.net
+
+0	7	doc/TODO.jf
+7	0	server/doc/TODO.jf
+
+
+1521579554 wcerfgba@riseup.net
+
+2	1	.gitignore
+1	2	common/.babelrc
+27	1	common/lib/file_line.js
+24	14	common/lib/heatmap.js
+0	2805	common/package-lock.json
+3	8	common/package.json
+53	0	common/src/effects.js
+24	0	common/src/file_line.js
+0	17	common/src/file_line.ts
+13	0	common/src/heatmap.js
+0	12	common/src/heatmap.ts
+9	0	common/src/timeline.js
+0	1845	common/yarn.lock
+7	0	doc/TODO.jf
+0	83	old_spikes/spike-0/README.md
+0	101	old_spikes/spike-0/scratch.clj
+0	11	old_spikes/spike-1/.gitignore
+0	5	old_spikes/spike-1/README.md
+0	3	old_spikes/spike-1/project.clj
+0	43	old_spikes/spike-1/src/spike_1/arithmetic_map.clj
+0	29	old_spikes/spike-1/src/spike_1/core.clj
+0	5	old_spikes/spike-1/src/spike_1/effect.clj
+0	69	old_spikes/spike-1/src/spike_1/effects.clj
+0	11	old_spikes/spike-1/src/spike_1/file_line.clj
+0	5	old_spikes/spike-1/src/spike_1/heatmap.clj
+0	32	old_spikes/spike-1/src/spike_1/states.clj
+0	20	old_spikes/spike-1/src/spike_1/timeline.clj
+0	41	old_spikes/spike-1/src/spike_1/utils.clj
+0	0	old_spikes/spike-2/README.md
+0	5	old_spikes/spike-2/package.json
+0	6	old_spikes/spike-2/src/effect.ts
+0	83	old_spikes/spike-2/src/effects.ts
+0	6	old_spikes/spike-2/src/file_line.ts
+0	42	old_spikes/spike-2/src/heatmap.ts
+0	26	old_spikes/spike-2/src/index.ts
+0	21	old_spikes/spike-2/src/timeline.ts
+0	8	old_spikes/spike-2/src/utils.ts
+0	3	old_spikes/spike-2/tsconfig.json
+0	7	old_spikes/spike-2/yarn.lock
+1	2	server/.babelrc
+14	0	server/go
+0	12	server/lib/add.js
+0	35	server/lib/effect.js
+36	65	server/lib/effects.js
+0	74	server/lib/file_line.js
+9	14	server/lib/heatmap.js
+12	10	server/lib/server.js
+29	70	server/lib/store.js
+7	25	server/lib/timeline.js
+0	12	server/lib/to_json.js
+5	51	server/lib/utils.js
+8	5	server/package.json
+0	1	server/src/add.js
+0	11	server/src/effect.js
+24	46	server/src/effects.js
+0	16	server/src/file_line.ts
+16	0	server/src/heatmap.js
+0	20	server/src/heatmap.ts
+33	25	server/src/server.js
+11	23	server/src/store.js
+9	14	server/src/timeline.js
+0	1	server/src/to_json.js
+0	57	server/src/tsconfig.json
+2	30	server/src/utils.js
+30	0	server/test/heatmap.request.spec.js
+2205	73	server/yarn-error.log
+2194	65	server/yarn.lock
+
+
+1521389310 wcerfgba@riseup.net
+
+30	28	client/vscode/src/extension.ts
+13	10	client/vscode/src/heatmap.ts
+10	0	common/.babelrc
+1	0	common/lib/file_line.js
+27	0	common/lib/heatmap.js
+2805	0	common/package-lock.json
+19	1	common/package.json
+2	1	common/src/heatmap.ts
+1838	0	common/yarn.lock
+8	3	server/.babelrc
+12	0	server/lib/add.js
+35	0	server/lib/effect.js
+84	0	server/lib/effects.js
+74	0	server/lib/file_line.js
+32	0	server/lib/heatmap.js
+39	0	server/lib/server.js
+78	0	server/lib/store.js
+39	0	server/lib/timeline.js
+12	0	server/lib/to_json.js
+82	0	server/lib/utils.js
+14	3	server/package.json
+6	2	server/src/heatmap.ts
+57	0	server/src/tsconfig.json
+1	0	server/vendor/eyeson-common
+2894	0	server/yarn-error.log
+1342	468	server/yarn.lock
+
+
+1521375834 wcerfgba@riseup.net
+
+1	0	client/vscode/src/heatmap.ts
+5	0	common/package.json
+17	0	common/src/file_line.ts
+11	0	common/src/heatmap.ts
+7	0	common/yarn.lock
+0	30	server/src/file_line.js
+16	0	server/src/file_line.ts
+0	33	server/src/heatmap.js
+16	0	server/src/heatmap.ts
+
+
+1521373638 wcerfgba@riseup.net
+
+3	0	.gitignore
+2	0	client/vscode/.gitignore
+16	0	client/vscode/.vscode/launch.json
+20	0	client/vscode/.vscode/tasks.json
+7	0	client/vscode/.vscodeignore
+2658	0	client/vscode/package-lock.json
+28	0	client/vscode/package.json
+38	0	client/vscode/src/extension.ts
+25	0	client/vscode/src/heatmap.ts
+15	0	client/vscode/tsconfig.json
+83	0	old_spikes/spike-0/README.md
+101	0	old_spikes/spike-0/scratch.clj
+11	0	old_spikes/spike-1/.gitignore
+5	0	old_spikes/spike-1/README.md
+3	0	old_spikes/spike-1/project.clj
+43	0	old_spikes/spike-1/src/spike_1/arithmetic_map.clj
+29	0	old_spikes/spike-1/src/spike_1/core.clj
+5	0	old_spikes/spike-1/src/spike_1/effect.clj
+69	0	old_spikes/spike-1/src/spike_1/effects.clj
+11	0	old_spikes/spike-1/src/spike_1/file_line.clj
+5	0	old_spikes/spike-1/src/spike_1/heatmap.clj
+32	0	old_spikes/spike-1/src/spike_1/states.clj
+20	0	old_spikes/spike-1/src/spike_1/timeline.clj
+41	0	old_spikes/spike-1/src/spike_1/utils.clj
+0	0	old_spikes/spike-2/README.md
+5	0	old_spikes/spike-2/package.json
+6	0	old_spikes/spike-2/src/effect.ts
+83	0	old_spikes/spike-2/src/effects.ts
+6	0	old_spikes/spike-2/src/file_line.ts
+42	0	old_spikes/spike-2/src/heatmap.ts
+26	0	old_spikes/spike-2/src/index.ts
+21	0	old_spikes/spike-2/src/timeline.ts
+8	0	old_spikes/spike-2/src/utils.ts
+3	0	old_spikes/spike-2/tsconfig.json
+7	0	old_spikes/spike-2/yarn.lock
+5	0	server/.babelrc
+13	0	server/package.json
+1	0	server/src/add.js
+11	0	server/src/effect.js
+52	0	server/src/effects.js
+30	0	server/src/file_line.js
+33	0	server/src/heatmap.js
+36	0	server/src/server.js
+41	0	server/src/store.js
+16	0	server/src/timeline.js
+1	0	server/src/to_json.js
+43	0	server/src/utils.js
+1960	0	server/yarn.lock
+0	83	spike-0/README.md
+0	101	spike-0/scratch.clj
+0	11	spike-1/.gitignore
+0	5	spike-1/README.md
+0	3	spike-1/project.clj
+0	43	spike-1/src/spike_1/arithmetic_map.clj
+0	29	spike-1/src/spike_1/core.clj
+0	5	spike-1/src/spike_1/effect.clj
+0	69	spike-1/src/spike_1/effects.clj
+0	11	spike-1/src/spike_1/file_line.clj
+0	5	spike-1/src/spike_1/heatmap.clj
+0	32	spike-1/src/spike_1/states.clj
+0	20	spike-1/src/spike_1/timeline.clj
+0	41	spike-1/src/spike_1/utils.clj
+0	0	spike-2/README.md
+0	16	spike-2/node_modules/.yarn-integrity
+0	21	spike-2/node_modules/immutable/LICENSE
+0	474	spike-2/node_modules/immutable/README.md
+0	33	spike-2/node_modules/immutable/contrib/cursor/README.md
+0	400	spike-2/node_modules/immutable/contrib/cursor/__tests__/Cursor.ts.skip
+0	290	spike-2/node_modules/immutable/contrib/cursor/index.d.ts
+0	341	spike-2/node_modules/immutable/contrib/cursor/index.js
+0	2533	spike-2/node_modules/immutable/dist/immutable-nonambient.d.ts
+0	2537	spike-2/node_modules/immutable/dist/immutable.d.ts
+0	4977	spike-2/node_modules/immutable/dist/immutable.js
+0	670	spike-2/node_modules/immutable/dist/immutable.js.flow
+0	34	spike-2/node_modules/immutable/dist/immutable.min.js
+0	111	spike-2/node_modules/immutable/package.json
+0	5	spike-2/package.json
+0	6	spike-2/src/effect.ts
+0	83	spike-2/src/effects.ts
+0	6	spike-2/src/file_line.ts
+0	42	spike-2/src/heatmap.ts
+0	26	spike-2/src/index.ts
+0	21	spike-2/src/timeline.ts
+0	8	spike-2/src/utils.ts
+0	3	spike-2/tsconfig.json
+0	7	spike-2/yarn.lock
+0	5	spike-3/.babelrc
+0	3	spike-3/.gitignore
+0	13	spike-3/package.json
+0	1	spike-3/src/add.js
+0	11	spike-3/src/effect.js
+0	52	spike-3/src/effects.js
+0	30	spike-3/src/file_line.js
+0	33	spike-3/src/heatmap.js
+0	36	spike-3/src/server.js
+0	41	spike-3/src/store.js
+0	16	spike-3/src/timeline.js
+0	1	spike-3/src/to_json.js
+0	43	spike-3/src/utils.js
+0	1960	spike-3/yarn.lock
+
+
+1521369317 wcerfgba@riseup.net
+
+2	1	spike-3/package.json
+11	2	spike-3/src/store.js
+1108	6	spike-3/yarn.lock
+
+
+1521314698 wcerfgba@riseup.net
+
+2	0	spike-3/package.json
+11	0	spike-3/src/effect.js
+0	26	spike-3/src/index.js
+36	0	spike-3/src/server.js
+32	0	spike-3/src/store.js
+281	1	spike-3/yarn.lock
+
+
+1521310559 wcerfgba@riseup.net
+
+2	2	spike-3/src/effects.js
+8	1	spike-3/src/utils.js
+
+
+1521309214 wcerfgba@riseup.net
+
+2	1	spike-3/.babelrc
+1	0	spike-3/package.json
+12	19	spike-3/src/effects.js
+2	3	spike-3/src/file_line.js
+17	1	spike-3/src/utils.js
+11	0	spike-3/yarn.lock
+
+
+1521298202 wcerfgba@riseup.net
+
+3	1	spike-3/.gitignore
+8	6	spike-3/src/file_line.js
+2	3	spike-3/src/heatmap.js
+
+
+1521297858 wcerfgba@riseup.net
+
+0	0	spike-2/README.md
+16	0	spike-2/node_modules/.yarn-integrity
+21	0	spike-2/node_modules/immutable/LICENSE
+474	0	spike-2/node_modules/immutable/README.md
+33	0	spike-2/node_modules/immutable/contrib/cursor/README.md
+400	0	spike-2/node_modules/immutable/contrib/cursor/__tests__/Cursor.ts.skip
+290	0	spike-2/node_modules/immutable/contrib/cursor/index.d.ts
+341	0	spike-2/node_modules/immutable/contrib/cursor/index.js
+2533	0	spike-2/node_modules/immutable/dist/immutable-nonambient.d.ts
+2537	0	spike-2/node_modules/immutable/dist/immutable.d.ts
+4977	0	spike-2/node_modules/immutable/dist/immutable.js
+670	0	spike-2/node_modules/immutable/dist/immutable.js.flow
+34	0	spike-2/node_modules/immutable/dist/immutable.min.js
+111	0	spike-2/node_modules/immutable/package.json
+5	0	spike-2/package.json
+6	0	spike-2/src/effect.ts
+83	0	spike-2/src/effects.ts
+6	0	spike-2/src/file_line.ts
+42	0	spike-2/src/heatmap.ts
+26	0	spike-2/src/index.ts
+21	0	spike-2/src/timeline.ts
+8	0	spike-2/src/utils.ts
+3	0	spike-2/tsconfig.json
+7	0	spike-2/yarn.lock
+4	0	spike-3/.babelrc
+1	0	spike-3/.gitignore
+9	0	spike-3/package.json
+1	0	spike-3/src/add.js
+59	0	spike-3/src/effects.js
+29	0	spike-3/src/file_line.js
+34	0	spike-3/src/heatmap.js
+26	0	spike-3/src/index.js
+16	0	spike-3/src/timeline.js
+1	0	spike-3/src/to_json.js
+20	0	spike-3/src/utils.js
+567	0	spike-3/yarn.lock
+
+
+1520973799 wcerfgba@riseup.net
+
+43	0	spike-1/src/spike_1/arithmetic_map.clj
+9	8	spike-1/src/spike_1/core.clj
+0	8	spike-1/src/spike_1/effect.clj
+16	16	spike-1/src/spike_1/effects.clj
+6	5	spike-1/src/spike_1/timeline.clj
+0	17	spike-1/src/spike_1/util.clj
+41	0	spike-1/src/spike_1/utils.clj
+
+
+1520793727 wcerfgba@riseup.net
+
+22	31	spike-1/src/spike_1/core.clj
+13	0	spike-1/src/spike_1/effect.clj
+69	0	spike-1/src/spike_1/effects.clj
+11	0	spike-1/src/spike_1/file_line.clj
+3	36	spike-1/src/spike_1/heatmap.clj
+19	0	spike-1/src/spike_1/timeline.clj
+10	1	spike-1/src/spike_1/util.clj
+
+
+1520773389 wcerfgba@riseup.net
+
+83	0	spike-0/README.md
+101	0	spike-0/scratch.clj
+11	0	spike-1/.gitignore
+5	0	spike-1/README.md
+3	0	spike-1/project.clj
+37	0	spike-1/src/spike_1/core.clj
+38	0	spike-1/src/spike_1/heatmap.clj
+32	0	spike-1/src/spike_1/states.clj
+8	0	spike-1/src/spike_1/util.clj

@@ -11,7 +11,7 @@ debug = (...xs) => console.debug inspect xs, { depth: null }
 
 
 
-matchCommit = (str) ###: ?Commit ### =>
+matchCommitHeader = (str) ###: ?Commit ### =>
   matches = str.match(/^(\d+) (.*@.*)$/)
   return null if !matches
   {
@@ -25,9 +25,24 @@ matchCommit = (str) ###: ?Commit ### =>
 type Commit = {
   time: number,
   email: string,
-  files: Array<string>
+  files: Array<{
+    name: string,
+    added: number,
+    deleted: number
+  }>
 }
 ###
+
+
+
+parseCommitChanges = (lines) =>
+  lines.map (line) =>
+    parts = line.split '\t'
+    {
+      added: Number parts[0]
+      deleted: Number parts[1]
+      name: parts[2]
+    }
 
 
 
@@ -47,28 +62,31 @@ class ChangesObjectStream extends Transform
     rawCommits = rawCommits.map trim
     commitObjects = rawCommits.reduce (commits, raw) =>
       lines = compact raw.split '\n'
-      commit = matchCommit lines[0]
+      commit = matchCommitHeader lines[0]
       if commit
-        newcommit = true
-        lines.shift()
-      else
-        commit = @lastCommit
-        newcommit = false
-      throw new Error 'Stream must begin at start of a commit' if !commit
-      commit.files = [
-        ...commit.files
-        ...(compact lines)
-      ]
-      if newcommit || isEmpty commits
-        commits.push commit
+        commit.files = parseCommitChanges lines.slice 1
         @lastCommit = commit
+        return [
+          ...commits,
+          commit
+        ]
+      commit = @lastCommit
+      throw new Error 'Stream must begin at start of a commit' if commit == null
+      changedFiles = parseCommitChanges lines
+      changedFiles.forEach (changedFile) =>
+        existingFile = commit.files.find (file) => file.name == changedFile.name
+        if existingFile
+          existingFile.added += changedFile.added
+          existingFile.deleted += changedFile.deleted
+        else
+          commit.files.push changedFile
       commits
     , []
     commitObjects.forEach (commit) => @push commit
 
 
 
-class UserFileCommitCountMatrix
+class UserFileChangeCountMatrix
   ###::
   matrix: Array<[string, Array<[string, number]>]>
   files: Array<string>
@@ -77,12 +95,12 @@ class UserFileCommitCountMatrix
 
   constructor: () ->
     # The matrix is a table with users along one axis and files along the other
-    # axis, and the number of commits a user has for a file as the cell. We 
-    # store the matrix internally as a 2-dimensional array of size 
+    # axis, and the number of changed lines a user has for a file as the cell.
+    # We store the matrix internally as a 2-dimensional array of size 
     # `<num users> x <num files>`, and where each entry is a key-value pair.
     # The user entry is outermost and the file entry is innermost. The user 
     # entry is of the form `[ <email>, [ <file entry> ] ]`, and the 
-    # file entry is of the form `[ <filename>, <user file commit count> ]`.
+    # file entry is of the form `[ <filename>, <user file line change count> ]`.
     # ```
     # [
     #   [ 'user1', [
@@ -103,13 +121,16 @@ class UserFileCommitCountMatrix
   
   addCommit: (commit) ->
     @emails = union @emails, [commit.email]
-    @files = union @files, commit.files
+    commitFileNames = commit.files.map (file) => file.name
+    @files = union @files, commitFileNames
     @reshapeMatrix()
     user = @matrix.find (u) => u[0] == commit.email
     throw new Error 'Matrix did not container user' if !user
-    files = user[1]
-    files.forEach (file) =>
-      file[1] += 1 if commit.files.includes file[0]
+    userFiles = user[1]
+    userFiles.forEach (userFile) =>
+      commitFile = commit.files.find (file) => file.name == userFile[0]
+      if commitFile
+        userFile[1] += commitFile.added + commitFile.deleted
 
   # Ensure that we have an entry in the matrix for every email in `@emails`,
   # and ensure that every user has an entry for every file in `@files`.
@@ -131,12 +152,12 @@ class UserFileCommitCountMatrix
 main = () =>
   changesProc =
     spawn 'git',
-      ['--no-pager', 'log', '--format=%n%n%ct %ae', '--name-only', '--no-merges'],
+      ['--no-pager', 'log', '--format=%n%n%ct %ae', '--numstat', '--no-merges', '--no-renames'],
       { env: { ...process.env, GIT_FLUSH: 0 } }
   changesRawStream = changesProc.stdout
   changesObjectStream = new ChangesObjectStream
   changesRawStream.pipe changesObjectStream
-  matrix = new UserFileCommitCountMatrix
+  matrix = new UserFileChangeCountMatrix
   end = new Promise (resolve, reject) =>
     changesObjectStream.on 'data', (commit) => matrix.addCommit commit
     changesProc.on 'exit', () =>
