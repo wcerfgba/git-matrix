@@ -1,0 +1,88 @@
+// @flow
+var ChangesObjectStream, Transform, compact, matchCommitHeader, parseCommitChanges, trim;
+
+({Transform} = require('stream'));
+
+({compact, trim} = require('./util'));
+
+matchCommitHeader = (str)/*: ?Commit */ => {
+  var matches;
+  matches = str.match(/^(\d+) (.*@.*)$/);
+  if (!matches) {
+    return null;
+  }
+  return {
+    time: Number(matches[1]),
+    email: matches[2],
+    files: []
+  };
+};
+
+parseCommitChanges = (lines) => {
+  return lines.map((line) => {
+    var parts;
+    parts = line.split('\t');
+    return {
+      added: Number(parts[0]),
+      deleted: Number(parts[1]),
+      name: parts[2]
+    };
+  });
+};
+
+ChangesObjectStream = class ChangesObjectStream extends Transform {
+  /*::
+  lastCommit: ?Commit
+  */
+  constructor() {
+    super({
+      objectMode: true
+    });
+    this.lastCommit = null;
+  }
+
+  _transform(chunk/*: Buffer | string */)/*: void */ {
+    var commitObjects, rawCommits;
+    chunk = chunk.toString();
+    rawCommits = chunk.split('\n\n\n');
+    rawCommits = compact(rawCommits);
+    rawCommits = rawCommits.map(trim);
+    commitObjects = rawCommits.reduce((commits, raw) => {
+      var changedFiles, commit, lines;
+      lines = compact(raw.split('\n'));
+      commit = matchCommitHeader(lines[0]);
+      if (commit) {
+        commit.files = parseCommitChanges(lines.slice(1));
+        this.lastCommit = commit;
+        return [...commits, commit];
+      }
+      commit = this.lastCommit;
+      if (commit === null) {
+        throw new Error('Stream must begin at start of a commit');
+      }
+      changedFiles = parseCommitChanges(lines);
+      changedFiles.forEach((changedFile) => {
+        var existingFile;
+        existingFile = commit.files.find((file) => {
+          return file.name === changedFile.name;
+        });
+        if (existingFile) {
+          existingFile.added += changedFile.added;
+          return existingFile.deleted += changedFile.deleted;
+        } else {
+          return commit.files.push(changedFile);
+        }
+      });
+      return commits;
+    }, []);
+    return commitObjects.forEach((commit) => {
+      return this.push(commit);
+    });
+  }
+
+};
+
+module.exports = ChangesObjectStream;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ2hhbmdlc09iamVjdFN0cmVhbS5qcyIsInNvdXJjZVJvb3QiOiIuLiIsInNvdXJjZXMiOlsic3JjL0NoYW5nZXNPYmplY3RTdHJlYW0uY29mZmVlIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQUEsSUFBQSxtQkFBQSxFQUFBLFNBQUEsRUFBQSxPQUFBLEVBQUEsaUJBQUEsRUFBQSxrQkFBQSxFQUFBOztBQUVBLENBQUEsQ0FBRSxTQUFGLENBQUEsR0FBZ0IsT0FBQSxDQUFRLFFBQVIsQ0FBaEI7O0FBQ0EsQ0FBQSxDQUFFLE9BQUYsRUFBVyxJQUFYLENBQUEsR0FBb0IsT0FBQSxDQUFRLFFBQVIsQ0FBcEI7O0FBRUEsaUJBQUEsR0FBb0IsQ0FBQyxHQUFELGVBQUEsR0FBQTtBQUNsQixNQUFBO0VBQUEsT0FBQSxHQUFVLEdBQUcsQ0FBQyxLQUFKLENBQVUsaUJBQVY7RUFDVixJQUFlLENBQUMsT0FBaEI7QUFBQSxXQUFPLEtBQVA7O1NBQ0E7SUFDRSxJQUFBLEVBQU0sTUFBQSxDQUFPLE9BQVEsQ0FBQSxDQUFBLENBQWYsQ0FEUjtJQUVFLEtBQUEsRUFBTyxPQUFRLENBQUEsQ0FBQSxDQUZqQjtJQUdFLEtBQUEsRUFBTztFQUhUO0FBSGtCOztBQVNwQixrQkFBQSxHQUFxQixDQUFDLEtBQUQsQ0FBQSxHQUFBO1NBQ25CLEtBQUssQ0FBQyxHQUFOLENBQVUsQ0FBQyxJQUFELENBQUEsR0FBQTtBQUNSLFFBQUE7SUFBQSxLQUFBLEdBQVEsSUFBSSxDQUFDLEtBQUwsQ0FBVyxJQUFYO1dBQ1I7TUFDRSxLQUFBLEVBQU8sTUFBQSxDQUFPLEtBQU0sQ0FBQSxDQUFBLENBQWIsQ0FEVDtNQUVFLE9BQUEsRUFBUyxNQUFBLENBQU8sS0FBTSxDQUFBLENBQUEsQ0FBYixDQUZYO01BR0UsSUFBQSxFQUFNLEtBQU0sQ0FBQSxDQUFBO0lBSGQ7RUFGUSxDQUFWO0FBRG1COztBQVNmLHNCQUFOLE1BQUEsb0JBQUEsUUFBa0MsVUFBbEMsQ0FBQTs7OztFQUtFLFdBQWEsQ0FBQSxDQUFBO1NBQ1gsQ0FBTTtNQUFFLFVBQUEsRUFBWTtJQUFkLENBQU47SUFDQSxJQUFDLENBQUEsVUFBRCxHQUFjO0VBRkg7O0VBSWIsVUFBWSxDQUFDLDJCQUFELFlBQUE7QUFDVixRQUFBLGFBQUEsRUFBQTtJQUFBLEtBQUEsR0FBUSxLQUFLLENBQUMsUUFBTixDQUFBO0lBQ1IsVUFBQSxHQUFhLEtBQUssQ0FBQyxLQUFOLENBQVksUUFBWjtJQUNiLFVBQUEsR0FBYSxPQUFBLENBQVEsVUFBUjtJQUNiLFVBQUEsR0FBYSxVQUFVLENBQUMsR0FBWCxDQUFlLElBQWY7SUFDYixhQUFBLEdBQWdCLFVBQVUsQ0FBQyxNQUFYLENBQWtCLENBQUMsT0FBRCxFQUFVLEdBQVYsQ0FBQSxHQUFBO0FBQ2hDLFVBQUEsWUFBQSxFQUFBLE1BQUEsRUFBQTtNQUFBLEtBQUEsR0FBUSxPQUFBLENBQVEsR0FBRyxDQUFDLEtBQUosQ0FBVSxJQUFWLENBQVI7TUFDUixNQUFBLEdBQVMsaUJBQUEsQ0FBa0IsS0FBTSxDQUFBLENBQUEsQ0FBeEI7TUFDVCxJQUFHLE1BQUg7UUFDRSxNQUFNLENBQUMsS0FBUCxHQUFlLGtCQUFBLENBQW1CLEtBQUssQ0FBQyxLQUFOLENBQVksQ0FBWixDQUFuQjtRQUNmLElBQUMsQ0FBQSxVQUFELEdBQWM7QUFDZCxlQUFPLENBQ0wsR0FBRyxPQURFLEVBRUwsTUFGSyxFQUhUOztNQU9BLE1BQUEsR0FBUyxJQUFDLENBQUE7TUFDVixJQUE0RCxNQUFBLEtBQVUsSUFBdEU7UUFBQSxNQUFNLElBQUksS0FBSixDQUFVLHdDQUFWLEVBQU47O01BQ0EsWUFBQSxHQUFlLGtCQUFBLENBQW1CLEtBQW5CO01BQ2YsWUFBWSxDQUFDLE9BQWIsQ0FBcUIsQ0FBQyxXQUFELENBQUEsR0FBQTtBQUNuQixZQUFBO1FBQUEsWUFBQSxHQUFlLE1BQU0sQ0FBQyxLQUFLLENBQUMsSUFBYixDQUFrQixDQUFDLElBQUQsQ0FBQSxHQUFBO2lCQUFVLElBQUksQ0FBQyxJQUFMLEtBQWEsV0FBVyxDQUFDO1FBQW5DLENBQWxCO1FBQ2YsSUFBRyxZQUFIO1VBQ0UsWUFBWSxDQUFDLEtBQWIsSUFBc0IsV0FBVyxDQUFDO2lCQUNsQyxZQUFZLENBQUMsT0FBYixJQUF3QixXQUFXLENBQUMsUUFGdEM7U0FBQSxNQUFBO2lCQUlFLE1BQU0sQ0FBQyxLQUFLLENBQUMsSUFBYixDQUFrQixXQUFsQixFQUpGOztNQUZtQixDQUFyQjthQU9BO0lBcEJnQyxDQUFsQixFQXFCZCxFQXJCYztXQXNCaEIsYUFBYSxDQUFDLE9BQWQsQ0FBc0IsQ0FBQyxNQUFELENBQUEsR0FBQTthQUFZLElBQUMsQ0FBQSxJQUFELENBQU0sTUFBTjtJQUFaLENBQXRCO0VBM0JVOztBQVRkOztBQXVDQSxNQUFNLENBQUMsT0FBUCxHQUFpQiIsInNvdXJjZXNDb250ZW50IjpbIiMgQGZsb3dcblxueyBUcmFuc2Zvcm0gfSA9IHJlcXVpcmUgJ3N0cmVhbSdcbnsgY29tcGFjdCwgdHJpbSB9ID0gcmVxdWlyZSAnLi91dGlsJ1xuXG5tYXRjaENvbW1pdEhlYWRlciA9IChzdHIpICMjIzogP0NvbW1pdCAjIyMgPT5cbiAgbWF0Y2hlcyA9IHN0ci5tYXRjaCgvXihcXGQrKSAoLipALiopJC8pXG4gIHJldHVybiBudWxsIGlmICFtYXRjaGVzXG4gIHtcbiAgICB0aW1lOiBOdW1iZXIgbWF0Y2hlc1sxXVxuICAgIGVtYWlsOiBtYXRjaGVzWzJdXG4gICAgZmlsZXM6IFtdXG4gIH1cblxucGFyc2VDb21taXRDaGFuZ2VzID0gKGxpbmVzKSA9PlxuICBsaW5lcy5tYXAgKGxpbmUpID0+XG4gICAgcGFydHMgPSBsaW5lLnNwbGl0ICdcXHQnXG4gICAge1xuICAgICAgYWRkZWQ6IE51bWJlciBwYXJ0c1swXVxuICAgICAgZGVsZXRlZDogTnVtYmVyIHBhcnRzWzFdXG4gICAgICBuYW1lOiBwYXJ0c1syXVxuICAgIH1cblxuY2xhc3MgQ2hhbmdlc09iamVjdFN0cmVhbSBleHRlbmRzIFRyYW5zZm9ybVxuICAjIyM6OlxuICBsYXN0Q29tbWl0OiA/Q29tbWl0XG4gICMjI1xuXG4gIGNvbnN0cnVjdG9yOiAoKSAtPlxuICAgIHN1cGVyKHsgb2JqZWN0TW9kZTogdHJ1ZSB9KVxuICAgIEBsYXN0Q29tbWl0ID0gbnVsbFxuXG4gIF90cmFuc2Zvcm06IChjaHVuayAjIyM6IEJ1ZmZlciB8IHN0cmluZyAjIyMpICMjIzogdm9pZCAjIyMgLT5cbiAgICBjaHVuayA9IGNodW5rLnRvU3RyaW5nKClcbiAgICByYXdDb21taXRzID0gY2h1bmsuc3BsaXQgJ1xcblxcblxcbidcbiAgICByYXdDb21taXRzID0gY29tcGFjdCByYXdDb21taXRzXG4gICAgcmF3Q29tbWl0cyA9IHJhd0NvbW1pdHMubWFwIHRyaW1cbiAgICBjb21taXRPYmplY3RzID0gcmF3Q29tbWl0cy5yZWR1Y2UgKGNvbW1pdHMsIHJhdykgPT5cbiAgICAgIGxpbmVzID0gY29tcGFjdCByYXcuc3BsaXQgJ1xcbidcbiAgICAgIGNvbW1pdCA9IG1hdGNoQ29tbWl0SGVhZGVyIGxpbmVzWzBdXG4gICAgICBpZiBjb21taXRcbiAgICAgICAgY29tbWl0LmZpbGVzID0gcGFyc2VDb21taXRDaGFuZ2VzIGxpbmVzLnNsaWNlIDFcbiAgICAgICAgQGxhc3RDb21taXQgPSBjb21taXRcbiAgICAgICAgcmV0dXJuIFtcbiAgICAgICAgICAuLi5jb21taXRzLFxuICAgICAgICAgIGNvbW1pdFxuICAgICAgICBdXG4gICAgICBjb21taXQgPSBAbGFzdENvbW1pdFxuICAgICAgdGhyb3cgbmV3IEVycm9yICdTdHJlYW0gbXVzdCBiZWdpbiBhdCBzdGFydCBvZiBhIGNvbW1pdCcgaWYgY29tbWl0ID09IG51bGxcbiAgICAgIGNoYW5nZWRGaWxlcyA9IHBhcnNlQ29tbWl0Q2hhbmdlcyBsaW5lc1xuICAgICAgY2hhbmdlZEZpbGVzLmZvckVhY2ggKGNoYW5nZWRGaWxlKSA9PlxuICAgICAgICBleGlzdGluZ0ZpbGUgPSBjb21taXQuZmlsZXMuZmluZCAoZmlsZSkgPT4gZmlsZS5uYW1lID09IGNoYW5nZWRGaWxlLm5hbWVcbiAgICAgICAgaWYgZXhpc3RpbmdGaWxlXG4gICAgICAgICAgZXhpc3RpbmdGaWxlLmFkZGVkICs9IGNoYW5nZWRGaWxlLmFkZGVkXG4gICAgICAgICAgZXhpc3RpbmdGaWxlLmRlbGV0ZWQgKz0gY2hhbmdlZEZpbGUuZGVsZXRlZFxuICAgICAgICBlbHNlXG4gICAgICAgICAgY29tbWl0LmZpbGVzLnB1c2ggY2hhbmdlZEZpbGVcbiAgICAgIGNvbW1pdHNcbiAgICAsIFtdXG4gICAgY29tbWl0T2JqZWN0cy5mb3JFYWNoIChjb21taXQpID0+IEBwdXNoIGNvbW1pdFxuXG5cbm1vZHVsZS5leHBvcnRzID0gQ2hhbmdlc09iamVjdFN0cmVhbSJdfQ==
+//# sourceURL=/home/jpreston/Sync/proj/eyeson/2018-08-26/src/ChangesObjectStream.coffee
