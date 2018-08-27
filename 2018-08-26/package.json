@@ -9,8 +9,8 @@
   "devDependencies": {},
   "scripts": {
     "start": "node index.js",
-    "build": "coffee -cMb --no-header . && flow",
+    "build": "coffee -cMb --no-header -o lib/ src/ && flow lib/",
     "watch": "chokidar *.coffee -c 'npm run build'"
   },
-  "author": ""
+  "author": "John Preston <wcerfgba@riseup.net>"
 }

@@ -1,3 +1,10 @@
+# 2018-08-27
+
+we have html output. need to tidy up and make it so i can load gitlog dumps.
+also i wanna exeriment with percentage change at some point (easier to 
+color, more semantic).
+
+
 # 2018-08-26
 
 todo:
