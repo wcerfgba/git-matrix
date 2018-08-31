@@ -1,3 +1,5 @@
+# @flow
+
 class UserFileCommitCountMatrix
   ###::
   matrix: Array<[string, Array<[string, number]>]>
