@@ -1,3 +1,14 @@
+# 2018-08-31
+
+we can now read from a file and write to a file. algorithm looks like its working and the performance is there. need to add in the other algorithms (commit count, percentage change), and maybe add 'cooling'.
+
+also, coloring the table. then maybe grouping files/emails.
+
+then, tests.
+
+need to look for those git pair programming plugins sam was on about.
+
+
 # 2018-08-27
 
 we have html output. need to tidy up and make it so i can load gitlog dumps.

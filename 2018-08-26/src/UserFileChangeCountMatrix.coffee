@@ -35,7 +35,7 @@ class UserFileChangeCountMatrix
     @files = []
     @emails = []
   
-  addCommit: (commit ###: Commit ###) ->
+  addCommit: (commit ###: Commit ###) =>
     @emails = union @emails, [commit.email]
     commitFileNames = commit.files.map (file) => file.name
     @files = union @files, commitFileNames
@@ -50,7 +50,7 @@ class UserFileChangeCountMatrix
 
   # Ensure that we have an entry in the matrix for every email in `@emails`,
   # and ensure that every user has an entry for every file in `@files`.
-  reshapeMatrix: () ->
+  reshapeMatrix: () =>
     currentEmails = @matrix.map (user) => user[0]
     newEmails = difference @emails, currentEmails
     newEmails.forEach (email) => 
@@ -62,7 +62,7 @@ class UserFileChangeCountMatrix
       newFiles.forEach (file) =>
         files.push [ file, 0 ]
 
-  sort: () ->
+  sort: () =>
     @files = @files.sort()
     @emails = @emails.sort()
     @matrix = sortBy @matrix, (user) => user[0]
