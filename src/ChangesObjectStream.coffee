@@ -16,8 +16,8 @@ parseCommitChanges = (lines) =>
   lines.map (line) =>
     parts = line.split '\t'
     {
-      added: Number parts[0]
-      deleted: Number parts[1]
+      linesAdded: Number parts[0]
+      linesDeleted: Number parts[1]
       name: parts[2]
     }
 
@@ -51,8 +51,8 @@ class ChangesObjectStream extends Transform
       changedFiles.forEach (changedFile) =>
         existingFile = commit.files.find (file) => file.name == changedFile.name
         if existingFile
-          existingFile.added += changedFile.added
-          existingFile.deleted += changedFile.deleted
+          existingFile.linesAdded += changedFile.linesAdded
+          existingFile.linesDeleted += changedFile.linesDeleted
         else
           commit.files.push changedFile
       commits

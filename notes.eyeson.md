@@ -1,3 +1,10 @@
+# 2018-09-01
+
+TODO:
+* bug: --output --only-log don't work!
+* bug: --input is broke
+
+
 # 2018-08-31
 
 we can now read from a file and write to a file. algorithm looks like its working and the performance is there. need to add in the other algorithms (commit count, percentage change), and maybe add 'cooling'.

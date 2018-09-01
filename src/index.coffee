@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 # @flow
 
 yargs = require 'yargs'
@@ -25,8 +26,9 @@ argv = yargs
   }
   .option 'o', {
     alias: 'output'
-    describe: "Output filename. If not specified, we pipe to stdout."
+    describe: "Output filename. If '-', we pipe to stdout."
     type: 'string'
+    defaultDescription: '"git-matrix.html" unless --only-log'
   }
   .option 'm', {
     alias: 'matrix'
@@ -41,20 +43,28 @@ argv = yargs
   # }
   .option 'l', {
     alias: 'only-log',
-    describe: "Only gets the git log."
+    describe: "Only gets the git log. Defaults output to stdout."
     type: 'boolean'
   }
   .argv
 
 (() =>
+  if !argv.output
+    argv.output = 'git-matrix.html' unless argv['only-log']
+
+  outputIsNotStdout = argv.output && argv.output != '-'
+
   input = createReadStream argv.input if argv.input
   input = (spawn ...GIT_LOG_SPAWN_ARGS).stdout unless argv.input
 
-  output = createWriteStream argv.output if argv.output
-  output = process.stdout unless argv.output
+  output = createWriteStream argv.output if outputIsNotStdout
+  output = process.stdout unless outputIsNotStdout
+
+  input.pause()
 
   if argv['only-log']
     input.pipe output
+    input.resume()
   else
     commits = new ChangesObjectStream
     input.pipe commits
@@ -68,9 +78,11 @@ argv = yargs
         throw new UnknownMatrixError argv.matrix
 
     end = new Promise (resolve, reject) =>
-      commits.on 'data', matrix.addCommit
+      commits.on 'data', (commit) =>
+        matrix.addCommit commit
       input.on 'end', resolve
 
+    input.resume()
     await end
 
     matrix.sort()
@@ -78,5 +90,5 @@ argv = yargs
 
     output.write html
 
-  output.destroy() if argv.output
+  output.destroy() if outputIsNotStdout
 )()
