@@ -53,7 +53,7 @@ class CommitMatrix
   # Ensure that we have an entry in the matrix for every email in `@emails`,
   # and ensure that every committer has an entry for every file in `@files`.
   reshapeMatrix: () =>
-    currentEmails = @matrix.map (committer) => committer[0]
+    currentEmails = @matrix.map (committer) => committer.email
     newEmails = difference @emails, currentEmails
     newEmails.forEach (email) => 
       @matrix.push { email, fileScores: [] }

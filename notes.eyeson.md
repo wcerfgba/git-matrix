@@ -1,8 +1,17 @@
+# 2018-09-02
+
+git behaves very strangely with `spawn`. now use `exec`. 
+
+
+
 # 2018-09-01
 
 TODO:
 * bug: --output --only-log don't work!
 * bug: --input is broke
+
+
+regarding breakage, `spike-2/node_modules/immutable/contrib/cursor/__tests__/Cursor.ts.skip` is only present when read from input. compare `git-matrix -o data/git-matrix.html` with `git-matrix -i data/git-matrix.log -o data/git-matrix-from-log.html`. i suspect we are not handling the spawn stream properly :(
 
 
 # 2018-08-31

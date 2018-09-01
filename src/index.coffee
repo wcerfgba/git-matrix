@@ -2,8 +2,9 @@
 # @flow
 
 yargs = require 'yargs'
+{ Readable } = require 'stream'
 { createReadStream, createWriteStream } = require 'fs'
-{ spawn } = require 'child_process'
+{ exec } = require 'child_process'
 { UnknownMatrixError } = require './errors'
 ChangesObjectStream = require './ChangesObjectStream'
 CommitCountMatrix = require './CommitCountMatrix'
@@ -11,9 +12,20 @@ ChangeCountMatrix = require './ChangeCountMatrix'
 { matrixToHtml } = require './renderMatrix' 
 
 
-GIT_LOG_SPAWN_ARGS = [
+
+util = require('util')
+exec = util.promisify(exec)
+
+
+
+GIT_SPAWN_CMD = [
   'git',
   ['--no-pager', 'log', '--format=%n%n%ct %ae', '--numstat', '--no-merges', '--no-renames'],
+  { env: { ...process.env, GIT_FLUSH: 0 } }
+]
+
+GIT_CMD = [
+  'git --no-pager log --format="%n%n%ct %ae" --numstat --no-merges --no-renames',
   { env: { ...process.env, GIT_FLUSH: 0 } }
 ]
 
@@ -54,8 +66,15 @@ argv = yargs
 
   outputIsNotStdout = argv.output && argv.output != '-'
 
-  input = createReadStream argv.input if argv.input
-  input = (spawn ...GIT_LOG_SPAWN_ARGS).stdout unless argv.input
+  if argv.input
+    input = createReadStream argv.input
+  else
+    inputIsGit = true
+    git = await exec ...GIT_CMD
+    input = new Readable
+    input.push git.stdout
+    input.push null
+    # input = git.stdout
 
   output = createWriteStream argv.output if outputIsNotStdout
   output = process.stdout unless outputIsNotStdout
@@ -79,6 +98,7 @@ argv = yargs
 
     end = new Promise (resolve, reject) =>
       commits.on 'data', (commit) =>
+        # console.log commit
         matrix.addCommit commit
       input.on 'end', resolve
 
