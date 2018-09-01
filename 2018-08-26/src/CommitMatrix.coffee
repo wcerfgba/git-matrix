@@ -46,8 +46,9 @@ class CommitMatrix
     committer.fileScores.forEach (fileScore) =>
       commitFile = commit.files.find (file) =>
         file.name == fileScore.fileName
-      fileScore.score =
-        @commitFileScoreReducer { commitFile, fileScore }
+      if commitFile
+        fileScore.score =
+          @commitFileScoreReducer { commitFile, fileScore }
 
   # Ensure that we have an entry in the matrix for every email in `@emails`,
   # and ensure that every committer has an entry for every file in `@files`.

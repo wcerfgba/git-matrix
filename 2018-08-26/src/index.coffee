@@ -4,7 +4,7 @@ yargs = require 'yargs'
 { createReadStream, createWriteStream } = require 'fs'
 { spawn } = require 'child_process'
 ChangesObjectStream = require './ChangesObjectStream'
-UserFileChangeCountMatrix = require './UserFileChangeCountMatrix'
+ChangeCountMatrix = require './ChangeCountMatrix'
 { matrixToHtml } = require './renderMatrix' 
 
 GIT_LOG_SPAWN_ARGS = [
@@ -33,7 +33,7 @@ main = () =>
   commits = new ChangesObjectStream
   input.pipe commits
 
-  matrix = new UserFileChangeCountMatrix
+  matrix = ChangeCountMatrix()
 
   end = new Promise (resolve, reject) =>
     commits.on 'data', matrix.addCommit
