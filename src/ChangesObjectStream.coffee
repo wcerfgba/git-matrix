@@ -12,12 +12,16 @@ matchCommitHeader = (str) ###: ?Commit ### =>
     files: []
   }
 
+parseChangeCount = (count) =>
+  return 1 if count == '-'
+  Number count
+
 parseCommitChanges = (lines) =>
   lines.map (line) =>
     parts = line.split '\t'
     {
-      linesAdded: Number parts[0]
-      linesDeleted: Number parts[1]
+      linesAdded: parseChangeCount parts[0]
+      linesDeleted: parseChangeCount parts[1]
       name: parts[2]
     }
 
