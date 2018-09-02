@@ -117,7 +117,8 @@ fileRows = (matrix) =>
             .map (committer) =>
               cellScore = committer.fileScores[fileIndex].score
               totalScore = file.totalScore
-              "<td style='#{scoreCellStyle { cellScore, totalScore }}'>#{cellScore}</td>"
+              title = "Filename: #{file.name}\nUser: #{committer.email}"
+              "<td style='#{scoreCellStyle { cellScore, totalScore }}' title='#{title}'>#{cellScore}</td>"
             .join '\n'
         }
       </tr>

@@ -1,10 +1,13 @@
 # 2018-09-02
 
-git behaves very strangely with `spawn`. now use `exec`. 
-
 TODO:
-* bug: handle binary stuff, they print as '-' and its causing NaNs :(
-* bug: output repeated 12 times wtf?
+* bug: --output --only-log don't work!
+* bug: `undefined` file row when running live
+* write tests!
+* why does `spawn` behave strangely?
+
+
+
 
 # 2018-09-01
 
