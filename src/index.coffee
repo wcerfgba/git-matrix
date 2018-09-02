@@ -103,6 +103,7 @@ argv = yargs
       commits.on 'data', (commit) =>
         # console.log commit
         matrix.addCommit commit
+        console.log matrix
       input.on 'end', resolve
 
     input.resume()

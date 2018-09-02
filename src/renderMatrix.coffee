@@ -97,11 +97,12 @@ tableHeading = ({ scope }) => (...headings) =>
     .join '\n'
 
 fileRows = (matrix) =>
+  console.log matrix.files
   matrix.files
-    .map (fileName, fileIndex) =>
+    .map (file, fileIndex) =>
       """
       <tr>
-        #{tableHeading({ scope: 'row'}) fileName}
+        #{tableHeading({ scope: 'row' }) file.name}
         #{
           matrix.matrix
             .map (committer) => "<td>#{committer.fileScores[fileIndex].score}</td>"
