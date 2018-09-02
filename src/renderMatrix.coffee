@@ -18,7 +18,7 @@ stylesheet = (matrix) =>
     max-width: #{bodyMaxWidthRems matrix};
     margin: 0 auto;
     background: hsl(240, 50%, 10%);
-    color: hsl(0, 0%, 95%);
+    color: #{textColorHsl()};
   }
 
   table {
@@ -48,7 +48,24 @@ stylesheet = (matrix) =>
     text-align: center;
     font-family: sans-serif;
   }
+
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    display: none
+  }
+
+  [data-tooltip]:hover,
+  [data-tooltip]:focus {
+    line-height: 0;
+  }
+
+  [data-tooltip]:hover::after,
+  [data-tooltip]:focus::after {
+    display: block;
+    line-height: 1.5;
+  }
   """
+
 bodyMaxWidthRems = (matrix) =>
   "#{numCols(matrix) * CELL_HEIGHT_REMS * 3}rem"
 
@@ -58,6 +75,8 @@ columnWidthPercentage = (matrix) =>
   "#{percentage}%"
 
 numCols = (matrix) => matrix.emails.length + 1
+
+textColorHsl = () => "hsl(0, 0%, 95%)"
 
 layout = ({ style }) => (...bodyContent) =>
   """
@@ -102,7 +121,7 @@ table = (matrix) =>
 
 tableHeading = ({ scope }) => (...headings) =>
   headings
-    .map (heading) => "<th scope='#{scope}'>#{heading}</th>"
+    .map (heading) => "<th scope='#{scope}' data-tooltip='#{heading}'>#{heading}</th>"
     .join '\n'
 
 fileRows = (matrix) =>
