@@ -4,6 +4,7 @@ git behaves very strangely with `spawn`. now use `exec`.
 
 TODO:
 * bug: handle binary stuff, they print as '-' and its causing NaNs :(
+* bug: output repeated 12 times wtf?
 
 # 2018-09-01
 
