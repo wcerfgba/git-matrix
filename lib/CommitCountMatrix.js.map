@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "CommitCountMatrix.js",
+  "sourceRoot": "..",
+  "sources": [
+    "src/CommitCountMatrix.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA;AAAA,IAAA,iBAAA,EAAA;;AAEA,YAAA,GAAe,OAAA,CAAQ,gBAAR;;AAEf,iBAAA,GAAoB,CAAA,CAAA,GAAA;SAClB,IAAI,YAAJ,CAAiB,CAAC,CAAE,UAAF,EAAc,SAAd,CAAD,CAAA,GAAA;WACf,SAAS,CAAC,KAAV,GAAkB;EADH,CAAjB;AADkB;;AAIpB,MAAM,CAAC,OAAP,GAAiB",
+  "sourcesContent": [
+    "# @flow\n\nCommitMatrix = require './CommitMatrix'\n\nCommitCountMatrix = () =>\n  new CommitMatrix ({ commitFile, fileScore }) =>\n    fileScore.score + 1\n\nmodule.exports = CommitCountMatrix"
+  ]
+}

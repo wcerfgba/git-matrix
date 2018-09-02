@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "ChangeCountMatrix.js",
+  "sourceRoot": "..",
+  "sources": [
+    "src/ChangeCountMatrix.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA;AAAA,IAAA,iBAAA,EAAA;;AAEA,YAAA,GAAe,OAAA,CAAQ,gBAAR;;AAEf,iBAAA,GAAoB,CAAA,CAAA,GAAA;SAClB,IAAI,YAAJ,CAAiB,CAAC,CAAE,UAAF,EAAc,SAAd,CAAD,CAAA,GAAA;WACf,SAAS,CAAC,KAAV,GAAkB,UAAU,CAAC,UAA7B,GAA0C,UAAU,CAAC;EADtC,CAAjB;AADkB;;AAIpB,MAAM,CAAC,OAAP,GAAiB",
+  "sourcesContent": [
+    "# @flow\n\nCommitMatrix = require './CommitMatrix'\n\nChangeCountMatrix = () =>\n  new CommitMatrix ({ commitFile, fileScore }) =>\n    fileScore.score + commitFile.linesAdded + commitFile.linesDeleted\n\nmodule.exports = ChangeCountMatrix"
+  ]
+}

@@ -18,7 +18,7 @@
   },
   "scripts": {
     "clean": "rm -rf lib/*",
-    "compile": "coffee -cMb --no-header -o lib/ src/",
+    "compile": "coffee -cmb --no-header -o lib/ src/",
     "shebangify": "sed -i '1s;^;#!/usr/bin/env node\\n;' lib/index.js",
     "check": "flow lib/",
     "chmod": "chmod +x lib/index.js",

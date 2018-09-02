@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "util.js",
+  "sourceRoot": "..",
+  "sources": [
+    "src/util.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA;AAAA,IAAA,OAAA,EAAA,KAAA,EAAA,UAAA,EAAA,KAAA,EAAA,OAAA,EAAA,OAAA,EAAA,IAAA,EAAA,KAAA,EAAA,MAAA,EAAA,IAAA,EAAA;;AAEA,CAAA,CAAE,OAAF,CAAA,GAAc,OAAA,CAAQ,MAAR,CAAd;;AACA,CAAA,CAAE,OAAF,EAAW,IAAX,EAAiB,UAAjB,EAA6B,OAA7B,EAAsC,IAAtC,EAA4C,KAA5C,EAAmD,MAAnD,EAA2D,KAA3D,CAAA,GAAqE,OAAA,CAAQ,QAAR,CAArE;;AAEA,KAAA,GAAQ,IAAI,CAAC;;AAEb,KAAA,GAAQ,CAAA,GAAI,EAAJ,CAAA,GAAA;SAAW,OAAO,CAAC,KAAR,CAAc,OAAA,CAAQ,EAAR,EAAY;IAAE,KAAA,EAAO;EAAT,CAAZ,CAAd;AAAX;;AAER,MAAM,CAAC,OAAP,GAAiB,CACf,KADe,EAEf,OAFe,EAEN,IAFM,EAEA,UAFA,EAEY,OAFZ,EAEqB,IAFrB,EAE2B,KAF3B,EAEkC,MAFlC,EAE0C,KAF1C,EAGf,KAHe",
+  "sourcesContent": [
+    "# @flow\n\n{ inspect } = require 'util'\n{ compact, last, difference, isEmpty, trim, union, sortBy, range } = require 'lodash'\n\nfloor = Math.floor\n\ndebug = (...xs) => console.debug inspect xs, { depth: null }\n\nmodule.exports = { \n  debug\n  compact, last, difference, isEmpty, trim, union, sortBy, range\n  floor\n}"
+  ]
+}
