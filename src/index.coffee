@@ -26,7 +26,10 @@ GIT_SPAWN_CMD = [
 
 GIT_CMD = [
   'git --no-pager log --format="%n%n%ct %ae" --numstat --no-merges --no-renames',
-  { env: { ...process.env, GIT_FLUSH: 0 } }
+  {
+    env: { ...process.env, GIT_FLUSH: 0 }
+    maxBuffer: 2 * 1024 * 1024
+  }
 ]
 
 
