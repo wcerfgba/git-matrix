@@ -4,7 +4,7 @@
 yargs = require 'yargs'
 { Readable } = require 'stream'
 { createReadStream, createWriteStream } = require 'fs'
-{ exec, spawn } = require 'child_process'
+{ exec } = require 'child_process'
 { UnknownMatrixError } = require './errors'
 ChangesObjectStream = require './ChangesObjectStream'
 CommitCountMatrix = require './CommitCountMatrix'
@@ -73,11 +73,11 @@ argv = yargs
     input = createReadStream argv.input
   else
     inputIsGit = true
-    git = await spawn ...GIT_SPAWN_CMD
-    # input = new Readable
-    # input.push git.stdout
-    # input.push null
-    input = git.stdout
+    git = await exec ...GIT_CMD
+    input = new Readable
+    input.push git.stdout
+    input.push null
+    # input = git.stdout
 
   output = createWriteStream argv.output if outputIsNotStdout
   output = process.stdout unless outputIsNotStdout
