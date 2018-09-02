@@ -4,7 +4,7 @@
 yargs = require 'yargs'
 { Readable } = require 'stream'
 { createReadStream, createWriteStream } = require 'fs'
-{ exec } = require 'child_process'
+{ exec, spawn } = require 'child_process'
 { UnknownMatrixError } = require './errors'
 ChangesObjectStream = require './ChangesObjectStream'
 CommitCountMatrix = require './CommitCountMatrix'
