@@ -10,10 +10,15 @@ matrixToHtml = (matrix ###: CommitMatrix ###) ###: string ### =>
     table matrix
   ]
 
+CELL_HEIGHT_REMS = 3
+
 stylesheet = (matrix) =>
   """
   body {
-    margin: 0;
+    max-width: #{bodyMaxWidthRems matrix};
+    margin: 0 auto;
+    background: hsl(240, 50%, 10%);
+    color: hsl(0, 0%, 95%);
   }
 
   table {
@@ -29,7 +34,7 @@ stylesheet = (matrix) =>
     font-weight: normal;
     font-size: 1rem;
     padding: 0.25rem;
-    height: 3rem;
+    height: #{CELL_HEIGHT_REMS}rem;
   }
 
   th {
@@ -44,12 +49,15 @@ stylesheet = (matrix) =>
     font-family: sans-serif;
   }
   """
+bodyMaxWidthRems = (matrix) =>
+  "#{numCols(matrix) * CELL_HEIGHT_REMS * 3}rem"
 
 columnWidthPercentage = (matrix) =>
-  numCols = matrix.emails.count + 1
-  ratio = 1 / numCols
+  ratio = 1 / numCols(matrix)
   percentage = floor (ratio * 100)
   "#{percentage}%"
+
+numCols = (matrix) => matrix.emails.length + 1
 
 layout = ({ style }) => (...bodyContent) =>
   """
@@ -77,8 +85,9 @@ table = (matrix) =>
   <table>
     <colgroup>
       #{
-        range(matrix.emails.count + 1).map () =>
-          "<col></col>"
+        range(numCols matrix)
+          .map () => "<col>"
+          .join '\n'
       }
     </colgroup>
     <tbody>
@@ -97,7 +106,6 @@ tableHeading = ({ scope }) => (...headings) =>
     .join '\n'
 
 fileRows = (matrix) =>
-  console.log matrix.files
   matrix.files
     .map (file, fileIndex) =>
       """
@@ -105,12 +113,21 @@ fileRows = (matrix) =>
         #{tableHeading({ scope: 'row' }) file.name}
         #{
           matrix.matrix
-            .map (committer) => "<td>#{committer.fileScores[fileIndex].score}</td>"
+            .map (committer) =>
+              cellScore = committer.fileScores[fileIndex].score
+              totalScore = file.totalScore
+              "<td style='#{scoreCellStyle { cellScore, totalScore }}'>#{cellScore}</td>"
             .join '\n'
         }
       </tr>
       """
     .join '\n'
+
+scoreCellStyle = ({ cellScore, totalScore }) =>
+  scoreHue = floor ((cellScore / totalScore) * 120)
+  [
+    "background: hsl(#{scoreHue}, 100%, 40%);"
+  ].join ''
 
 module.exports = {
   matrixToHtml
