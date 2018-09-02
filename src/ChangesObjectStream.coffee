@@ -34,7 +34,7 @@ class ChangesObjectStream extends Transform
     super({ objectMode: true })
     @lastCommit = null
 
-  _transform: (chunk ###: Buffer | string ###) ###: void ### ->
+  _transform: (chunk ###: Buffer | string ###, encoding, callback) ###: void ### ->
     chunk = chunk.toString()
     rawCommits = chunk.split '\n\n\n'
     rawCommits = compact rawCommits
@@ -62,6 +62,7 @@ class ChangesObjectStream extends Transform
       commits
     , []
     commitObjects.forEach (commit) => @push commit
+    callback()
 
 
 module.exports = ChangesObjectStream

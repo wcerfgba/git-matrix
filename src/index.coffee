@@ -73,11 +73,11 @@ argv = yargs
     input = createReadStream argv.input
   else
     inputIsGit = true
-    git = await exec ...GIT_CMD
-    input = new Readable
-    input.push git.stdout
-    input.push null
-    # input = git.stdout
+    git = await spawn ...GIT_SPAWN_CMD
+    # input = new Readable
+    # input.push git.stdout
+    # input.push null
+    input = git.stdout
 
   output = createWriteStream argv.output if outputIsNotStdout
   output = process.stdout unless outputIsNotStdout
@@ -104,7 +104,7 @@ argv = yargs
         # console.log commit
         matrix.addCommit commit
         # console.log matrix
-      input.on 'end', resolve
+      commits.on 'finish', resolve
 
     input.resume()
     await end
