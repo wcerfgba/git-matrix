@@ -4,7 +4,7 @@
 yargs = require 'yargs'
 { Readable } = require 'stream'
 { createReadStream, createWriteStream } = require 'fs'
-{ exec } = require 'child_process'
+{ exec, spawn } = require 'child_process'
 { UnknownMatrixError } = require './errors'
 ChangesObjectStream = require './ChangesObjectStream'
 CommitCountMatrix = require './CommitCountMatrix'
@@ -12,79 +12,80 @@ ChangeCountMatrix = require './ChangeCountMatrix'
 { matrixToHtml } = require './renderMatrix' 
 
 
-
-util = require('util')
-exec = util.promisify(exec)
-
-
-
+# git log command preformatted for spawn and exec.
 GIT_SPAWN_CMD = [
   'git',
-  ['--no-pager', 'log', '--format=%n%n%ct %ae', '--numstat', '--no-merges', '--no-renames'],
-  { env: { ...process.env, GIT_FLUSH: 0 } }
+  ['--no-pager', 'log', '--format=%n%n%ct %cE', '--numstat', '--no-merges', '--no-renames'],
+  { env: { GIT_FLUSH: 0 } }
 ]
 
-GIT_CMD = [
-  'git --no-pager log --format="%n%n%ct %ae" --numstat --no-merges --no-renames',
-  {
-    env: { ...process.env, GIT_FLUSH: 0 }
-    maxBuffer: 2 * 1024 * 1024
-  }
-]
+# GIT_CMD = [
+#   'git --no-pager log --format="%n%n%ct %cE" --numstat --no-merges --no-renames',
+#   {
+#     env: { GIT_FLUSH: 0 }
+#     maxBuffer: 2 * 1024 * 1024
+#   }
+# ]
 
 
-argv = yargs
-  .option 'i', {
-    alias: 'input'
-    describe: "Filename of input git log output. If not specified we execute the command in the working directory and pipe in the output."
-    type: 'string'
-  }
-  .option 'o', {
-    alias: 'output'
-    describe: "Output filename. If '-', we pipe to stdout."
-    type: 'string'
-    defaultDescription: '"git-matrix.html" unless --only-log'
-  }
-  .option 'm', {
-    alias: 'matrix'
-    describe: "The function used to calculate the value for each file and user."
-    choices: ['commits', 'changes'],
-    default: 'changes'
-  }
-  # .option 'c', {
-  #   alias: 'cooling'
-  #   describe: "Experimental cooling function where the scores in the matrix decrement over time."
-  #   type: 'number'
-  # }
-  .option 'l', {
-    alias: 'only-log',
-    describe: "Only gets the git log. Defaults output to stdout."
-    type: 'boolean'
-  }
-  .argv
 
 (() =>
+  argv = yargs
+    .option 'i', {
+      alias: 'input'
+      describe: "Filename of input git log. If not specified we execute the command in the working directory."
+      type: 'string'
+    }
+    .option 'o', {
+      alias: 'output'
+      describe: "Output filename. If '-' we pipe to stdout."
+      type: 'string'
+      defaultDescription: '"git-matrix.html" unless --only-log'
+    }
+    .option 'm', {
+      alias: 'matrix'
+      describe: "The function used to calculate the value of each cell."
+      choices: ['commits', 'changes'],
+      default: 'changes'
+    }
+    # .option 'c', {
+    #   alias: 'cooling'
+    #   describe: "Experimental cooling function where the scores in the matrix decrement over time."
+    #   type: 'number'
+    # }
+    .option 'l', {
+      alias: 'only-log',
+      describe: "Only gets the git log, which can be read in with '-i'. Output defaults to stdout."
+      type: 'boolean'
+    }
+    .argv
+
+  # Set defaults
   if !argv.output
     argv.output = 'git-matrix.html' unless argv['only-log']
 
-  outputIsNotStdout = argv.output && argv.output != '-'
+  outputIsStdout = !argv.output || argv.output == '-'
+  inputIsGit = !argv.input
+  onlyLog = argv['only-log']
 
-  if argv.input
-    input = createReadStream argv.input
-  else
-    inputIsGit = true
-    git = await exec ...GIT_CMD
-    input = new Readable
-    input.push git.stdout
-    input.push null
-    # input = git.stdout
-
-  output = createWriteStream argv.output if outputIsNotStdout
-  output = process.stdout unless outputIsNotStdout
+  input = createReadStream argv.input unless inputIsGit
+  input = (spawn ...GIT_SPAWN_CMD).stdout if inputIsGit
+  
+  # if argv.input
+  #   input = createReadStream argv.input
+  # else
+  #   git = await spawnSync ...GIT_CMD
+  #   # input = new Readable
+  #   # input.push git.stdout
+  #   # input.push null
+  #   # input = git.stdout
 
   input.pause()
 
-  if argv['only-log']
+  output = createWriteStream argv.output unless outputIsStdout
+  output = process.stdout if outputIsStdout
+
+  if onlyLog
     input.pipe output
     input.resume()
   else
@@ -101,18 +102,22 @@ argv = yargs
 
     end = new Promise (resolve, reject) =>
       commits.on 'data', (commit) =>
-        # console.log commit
+        console.log 'data'
         matrix.addCommit commit
         # console.log matrix
-      commits.on 'finish', resolve
+      commits.on 'finish', () =>
+        console.log 'finish'
+        resolve()
 
     input.resume()
     await end
 
+    console.log matrix
     matrix.sort()
+    console.log matrix
     html = matrixToHtml matrix
+    console.log html
+    await output.write html
 
-    output.write html
-
-  output.destroy() if outputIsNotStdout
+  output.destroy() unless outputIsStdout
 )()
