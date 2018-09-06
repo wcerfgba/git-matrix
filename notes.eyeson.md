@@ -15,6 +15,11 @@ TODO:
 for grouping files, perhaps a tag-based system would be good. one file -> many tags, sum together files for a tag. same principle could work for users.
 
 for files, use a standard/external system for tags. `ctags` suggests a nice format: `<tag>\t<filename>`. possible to write another utility for this, but better to write a ctags command line.
+https://arxiv.org/pdf/1803.00048.pdf
+
+for users, use .git-authors
+https://github.com/git-duet/git-duet 
+https://github.com/EngineerBetter/git-authors/blob/master/authors
 
 
 
