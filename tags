@@ -1,0 +1,15 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CELL_HEIGHT_REMS	lib/renderMatrix.js	/^var CELL_HEIGHT_REMS, bodyMaxWidthRems, columnWidthPercentage, elMap, fileRows, floor, header, layout, matrixToHtml, numCols, range, scoreCellStyle, stylesheet, table, tableHeading;$/;"	v
+ChangeCountMatrix	lib/ChangeCountMatrix.js	/^var ChangeCountMatrix, CommitMatrix;$/;"	v
+ChangesObjectStream	lib/ChangesObjectStream.js	/^var ChangesObjectStream, FILE_REGEXP, FileLineDoesNotMatchError, HEADER_REGEXP, Transform, compact, debug, matchCommitHeader, matchRawCommit, parseChangeCount, parseCommitChanges, sumBy, trim;$/;"	v
+CommitCountMatrix	lib/CommitCountMatrix.js	/^var CommitCountMatrix, CommitMatrix;$/;"	v
+CommitMatrix	lib/CommitMatrix.js	/^var CommitMatrix, difference, sortBy, union;$/;"	v
+GitMatrixError	lib/errors.js	/^var GitMatrixError, UnknownMatrixError;$/;"	v
+UnknownMatrixError	lib/errors.js	/^UnknownMatrixError = function(matrix) {$/;"	f
+compact	lib/util.js	/^var compact, debug, difference, floor, inspect, isEmpty, last, range, sortBy, sumBy, trim, union;$/;"	v
+time	lib/ChangesObjectStream.js	/^    time: Number(header[1]),$/;"	p	class:commit

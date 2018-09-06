@@ -11,21 +11,12 @@ CommitCountMatrix = require './CommitCountMatrix'
 ChangeCountMatrix = require './ChangeCountMatrix'
 { matrixToHtml } = require './renderMatrix' 
 
-
 # git log command preformatted for spawn and exec.
 GIT_SPAWN_CMD = [
   'git',
   ['--no-pager', 'log', '--format=%n%n%ct %cE', '--numstat', '--no-merges', '--no-renames'],
   { env: { GIT_FLUSH: 0 } }
 ]
-
-# GIT_CMD = [
-#   'git --no-pager log --format="%n%n%ct %cE" --numstat --no-merges --no-renames',
-#   {
-#     env: { GIT_FLUSH: 0 }
-#     maxBuffer: 2 * 1024 * 1024
-#   }
-# ]
 
 
 
@@ -100,23 +91,28 @@ GIT_SPAWN_CMD = [
       else
         throw new UnknownMatrixError argv.matrix
 
-    end = new Promise (resolve, reject) =>
-      commits.on 'data', (commit) =>
-        console.log 'data'
-        matrix.addCommit commit
-        # console.log matrix
-      commits.on 'finish', () =>
-        console.log 'finish'
+    commits.on 'data', (commit) =>
+      # console.log commits.totalBytesRead
+      matrix.addCommit commit
+      # console.log matrix
+
+    inputEnd = new Promise (resolve, reject) =>
+      input.on 'end', () =>
+        console.log 'input end'
+        resolve()
+    commitsEnd = new Promise (resolve, reject) =>
+      commits.on 'end', () =>
+        console.log 'commits end'
         resolve()
 
     input.resume()
-    await end
+    await Promise.all [inputEnd, commitsEnd]
 
-    console.log matrix
+    # console.log matrix
     matrix.sort()
-    console.log matrix
+    # console.log matrix
     html = matrixToHtml matrix
-    console.log html
+    # console.log html
     await output.write html
 
   output.destroy() unless outputIsStdout

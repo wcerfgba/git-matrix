@@ -27,7 +27,7 @@ parseCommitChanges = (lines) =>
 
 
 HEADER_REGEXP = /^(\d+) (.*@.*)$/
-FILE_REGEXP = /^(\d+)\t(\d+)\t(.*)$/
+FILE_REGEXP = /^(\d+|-)\t(\d+|-)\t(.*)$/
 
 matchRawCommit = (text) =>
   lines = text.split '\n'
@@ -78,59 +78,25 @@ class ChangesObjectStream extends Transform
   ###
 
   constructor: () ->
-    super({ objectMode: true })
+    super({ readableObjectMode: true })
     @buffer = ''
     @totalBytesRead = 0
 
   _transform: (chunk ###: Buffer ###, encoding, callback) ###: void ### ->
     @totalBytesRead += chunk.length
+    # console.log 'inside:', @totalBytesRead
     @buffer += chunk.toString()
     # console.log @buffer
     while matchedCommit = matchRawCommit @buffer
-      { commit, length } = matchedCommit 
+      { commit, length } = matchedCommit
+      # console.log 'length:', length
       # console.log matchedCommit
       @buffer = @buffer.slice length
-      # console.log @buffer
+      # console.log '\n---BEGIN---\n', @buffer, '\n---END---\n'
       @push commit
       newData = true
       # debug @buffer
     callback() if newData
-
-
-
-
-
-
-    # @totalBytesRead += chunk.length
-    # console.log @totalBytesRead, 'total bytes read'
-    # chunk = chunk.toString()
-    # rawCommits = chunk.split '\n\n\n'
-    # rawCommits = rawCommits.map trim
-    # rawCommits = compact rawCommits
-    # commitObjects = rawCommits.reduce (commits, raw) =>
-    #   lines = compact raw.split '\n'
-    #   commit = matchCommitHeader lines[0]
-    #   if commit
-    #     commit.files = parseCommitChanges lines.slice 1
-    #     @lastCommit = commit
-    #     return [
-    #       ...commits,
-    #       commit
-    #     ]
-    #   commit = @lastCommit
-    #   throw new Error 'Stream must begin at start of a commit' if commit == null
-    #   changedFiles = parseCommitChanges lines
-    #   changedFiles.forEach (changedFile) =>
-    #     existingFile = commit.files.find (file) => file.name == changedFile.name
-    #     if existingFile
-    #       existingFile.linesAdded += changedFile.linesAdded
-    #       existingFile.linesDeleted += changedFile.linesDeleted
-    #     else
-    #       commit.files.push changedFile
-    #   commits
-    # , []
-    # commitObjects.forEach (commit) => @push commit
-    # callback()
 
 
 module.exports = ChangesObjectStream

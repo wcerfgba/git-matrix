@@ -1,3 +1,23 @@
+# 2018-09-06
+
+After getting debugging set up and experimenting with the streams, it would appear that at least part of the issue was due to not matching for the hyphen for changes in binary files! need to tidy up stuff next.
+
+TODO:
+* bug: --output --only-log don't work!
+* write tests!
+* logging
+* documentation
+* feature: grouping users
+* feature: grouping files
+* option to print git log command for external use
+* nice to have: convert html output to another transform stream
+
+for grouping files, perhaps a tag-based system would be good. one file -> many tags, sum together files for a tag. same principle could work for users.
+
+for files, use a standard/external system for tags. `ctags` suggests a nice format: `<tag>\t<filename>`. possible to write another utility for this, but better to write a ctags command line.
+
+
+
 # 2018-09-04
 
 `pca` missing...
