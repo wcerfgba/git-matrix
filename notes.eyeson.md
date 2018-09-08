@@ -1,3 +1,16 @@
+# 2018-09-08
+
+TODO:
+* write tests!
+* logging
+* documentation
+* feature: grouping users
+* feature: grouping files
+* option to print git log command for external use
+* nice to have: convert html output to another transform stream
+
+
+
 # 2018-09-06
 
 After getting debugging set up and experimenting with the streams, it would appear that at least part of the issue was due to not matching for the hyphen for changes in binary files! need to tidy up stuff next.
@@ -20,6 +33,7 @@ https://arxiv.org/pdf/1803.00048.pdf
 for users, use .git-authors
 https://github.com/git-duet/git-duet 
 https://github.com/EngineerBetter/git-authors/blob/master/authors
+
 
 
 

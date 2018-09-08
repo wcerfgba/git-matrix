@@ -9,7 +9,8 @@ yargs = require 'yargs'
 ChangesObjectStream = require './ChangesObjectStream'
 CommitCountMatrix = require './CommitCountMatrix'
 ChangeCountMatrix = require './ChangeCountMatrix'
-{ matrixToHtml } = require './renderMatrix' 
+{ matrixToHtml } = require './renderMatrix'
+{ onEnd } = require './util'
 
 # git log command preformatted for spawn and exec.
 GIT_SPAWN_CMD = [
@@ -78,7 +79,14 @@ GIT_SPAWN_CMD = [
 
   if onlyLog
     input.pipe output
+
+    end = Promise.all [
+      onEnd input
+      onEnd output
+    ]
+
     input.resume()
+    await end
   else
     commits = new ChangesObjectStream
     input.pipe commits
@@ -96,17 +104,13 @@ GIT_SPAWN_CMD = [
       matrix.addCommit commit
       # console.log matrix
 
-    inputEnd = new Promise (resolve, reject) =>
-      input.on 'end', () =>
-        console.log 'input end'
-        resolve()
-    commitsEnd = new Promise (resolve, reject) =>
-      commits.on 'end', () =>
-        console.log 'commits end'
-        resolve()
-
+    end = Promise.all [
+      onEnd input
+      onEnd commits
+    ]
+    
     input.resume()
-    await Promise.all [inputEnd, commitsEnd]
+    await end
 
     # console.log matrix
     matrix.sort()

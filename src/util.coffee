@@ -7,8 +7,13 @@ floor = Math.floor
 
 debug = (...xs) => console.debug inspect xs, { depth: null }
 
+onEnd = (readStream) => new Promise (resolve, reject) =>
+  readStream.on 'end', () =>
+    resolve()
+
 module.exports = { 
   debug
   compact, last, difference, isEmpty, trim, union, sortBy, range, sumBy
   floor
+  onEnd
 }
