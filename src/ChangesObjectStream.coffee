@@ -3,52 +3,40 @@
 { Transform } = require 'stream'
 { compact, trim, sumBy, debug } = require './util'
 
-matchCommitHeader = (str) ###: ?Commit ### =>
-  matches = str.match(/^(\d+) (.*@.*)$/)
-  return null if !matches
-  {
-    time: Number matches[1]
-    email: matches[2]
-    files: []
-  }
-
 parseChangeCount = (count) =>
   return 1 if count == '-'
   Number count
 
-parseCommitChanges = (lines) =>
-  lines.map (line) =>
-    parts = line.split '\t'
-    {
-      linesAdded: parseChangeCount parts[0]
-      linesDeleted: parseChangeCount parts[1]
-      name: parts[2]
-    }
-
-
-HEADER_REGEXP = /^(\d+) (.*@.*)$/
+WRAPPER_REGEXP = /\n\n([\s\S]*?)\n\n\n/
+HEADER_REGEXP = /^(\d+) (.*)$/
 FILE_REGEXP = /^(\d+|-)\t(\d+|-)\t(.*)$/
 
 matchRawCommit = (text) =>
   try
+    # console.log 'qwe' if text.startsWith '\n\n1473640846'
+    # Commit should be wrapped in two newlines.
+    text = text.match WRAPPER_REGEXP
+    return false if !text
+    text = text[1]
     # console.log text
     lines = text.split '\n'
     # console.log lines
-    return false if lines.length == 0
-    # Scrub empty lines at beginning.
-    shift lines while lines[0] == ''
     header = (shift lines).match HEADER_REGEXP
     return false if !header
-    # Next line is empty.
-    return false if (shift lines) != ''
-    # Last file line should terminate with a newline, leaving an empty string
-    # at the end of the array, so find the first empty string in the array
-    # and terminate the commit there.
-    lastLine = lines.indexOf ''
-    return false if lastLine == -1
-    files = lines.slice 0, lastLine
-    files = files.map (file) =>
-      file = file.match FILE_REGEXP
+    # Next line is empty, or would be if the commit had files.
+    noFiles = true if lines.length == 0
+    return false if (shift lines) != '' unless noFiles
+    # # Last file line should terminate with a newline, leaving an empty string
+    # # at the end of the array, so find the first empty string in the array
+    # # and terminate the commit there.
+    # lastLine = lines.indexOf ''
+    # return false if lastLine == -1
+    # # After lastLine, we expect the final second newline which marks the end
+    # # of the numstats, and the end of the commit.
+    # return false if lines.length <= lastLine || lines[lastLine + 1] != ''
+    # files = lines.slice 0, lastLine
+    files = lines.map (line) =>
+      file = line.match FILE_REGEXP
       throw new FileLineDoesNotMatchError if !file
       {
         linesAdded: parseChangeCount file[1]
@@ -61,11 +49,14 @@ matchRawCommit = (text) =>
       files
     }
     length = sumBy [
-      '\n\n'
+      '\n'
+      '\n'
       header[0], '\n'
-      '\n'
-      lines.slice(0, lastLine).join '\n'
-      '\n'
+      if noFiles then '' else '\n'
+      lines.join '\n', '\n'
+      if noFiles then '' else '\n'
+      # Don't take off the last two newlines, because they wrap the start of 
+      # the next commit.
     ], (string) => string.length
     { commit, length }
   catch e
@@ -97,6 +88,9 @@ class ChangesObjectStream extends Transform
     @totalBytesRead += chunk.length
     # console.log 'inside:', @totalBytesRead
     @buffer += chunk.toString()
+    @processBuffer callback
+
+  processBuffer: (callback) =>
     # console.log '@buffer.length', @buffer.length
     commitsMatched = 0
     while matchedCommit = matchRawCommit @buffer
@@ -113,6 +107,13 @@ class ChangesObjectStream extends Transform
     @assertChunksSinceLastCommit commitsMatched
     # console.log 'commitsMatched', commitsMatched
     callback() if newData
+
+  _flush: (callback) ->
+    # Force a final commit to be flushed by ensuring we can match the end of
+    # a list of numstat lines.
+    @buffer += '\n\n'
+    @processBuffer callback
+
     
   assertChunksSinceLastCommit: (commitsMatched ###: number ###) =>
     @chunksSinceLastCommit = 0 if commitsMatched > 0

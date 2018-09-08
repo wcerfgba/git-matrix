@@ -9,7 +9,7 @@ debug = (...xs) => console.debug inspect xs, { depth: null }
 
 onEnd = (readStream) => new Promise (resolve, reject) =>
   readStream.on 'end', () =>
-    console.log 'end'
+    # console.log 'end'
     resolve()
 
 module.exports = { 

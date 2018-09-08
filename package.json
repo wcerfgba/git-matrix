@@ -21,7 +21,7 @@
     "compile": "coffee -cb --no-header -o lib/ src/",
     "shebangify": "sed -i '1s;^;#!/usr/bin/env node\\n;' lib/index.js",
     "typecheck": "flow lib/",
-    "test": "mocha --require coffeescript/register ./test/**/*.test.coffee",
+    "test": "mocha --require coffeescript/register --timeout 30000 ./test/**/*.test.coffee",
     "verify": "npm run typecheck ; npm run test",
     "chmod": "chmod +x lib/index.js",
     "build": "npm run clean && npm run compile && npm run shebangify && npm run verify ; npm run chmod",

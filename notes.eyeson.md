@@ -7,9 +7,10 @@ TODO:
 * feature: grouping users
 * feature: grouping files
 * option to print git log command for external use
+* performance
 * nice to have: convert html output to another transform stream
 
-got some exceptions set up to print start of buffer when we fail to match commits after multiple input chunks. current issue is a commit in vuetify without an email address, just a name! so need to improve parsing.
+parsing more or less debugged thanks to tests and debugger. :)
 
 
 

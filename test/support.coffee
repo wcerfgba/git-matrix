@@ -1,6 +1,6 @@
 { AssertionError } = node_assert = require 'assert'
 { test } = mocha = require 'mocha'
-{ ls, cd, exec } = shelljs = require 'shelljs'
+{ ls, cd, exec, rm } = shelljs = require 'shelljs'
 
 assert = node_assert.strict
 
@@ -26,7 +26,6 @@ assertExec = (cmd, expectation = {}) =>
 module.exports = {
   assert
   test
-  ls, cd
-  exec
+  ls, cd, exec, rm
   assertExec
 }
