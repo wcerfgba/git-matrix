@@ -9,6 +9,8 @@ TODO:
 * option to print git log command for external use
 * nice to have: convert html output to another transform stream
 
+got some exceptions set up to print start of buffer when we fail to match commits after multiple input chunks. current issue is a commit in vuetify without an email address, just a name! so need to improve parsing.
+
 
 
 # 2018-09-06
